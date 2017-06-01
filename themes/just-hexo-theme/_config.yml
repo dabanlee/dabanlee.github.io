@@ -1,14 +1,14 @@
 menu:
     blog: /
     archive: /archives/
-    gitHub: https://github.com/meitufe
+    gitHub: https://github.com/justclear
     rss: /atom.xml
 
 favicon: /favicon.png
 logo: /favicon.png
-title: Meitu FE
+title: Just
 description: ''
-url: http://meitufe.github.io/
+url: http://justclear.github.io/
 cover:
     home:
     archive:
@@ -19,4 +19,4 @@ disqus:
 duoshuo:
 
 # Copyright Infomation
-startyear: 2017
+startyear: 2015
