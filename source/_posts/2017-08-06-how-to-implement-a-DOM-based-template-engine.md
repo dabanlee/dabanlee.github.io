@@ -6,6 +6,10 @@ categories: 	note
 thumbnail:      how-to-implement-a-dom-based-template-engine/cover.jpg
 ---
 
+> 题图：[Vincent Guth](https://unsplash.com/photos/ISI5DlnYvuY)
+
+> 首发于[知乎专栏 · 黑客与画家](https://zhuanlan.zhihu.com/p/28376182)
+
 可能你已经体会到了 `Vue` 所带来的便捷了，相信有一部分原因也是因为其基于 DOM 的语法简洁的模板渲染引擎。这篇文章将会介绍如何实现一个基于 DOM 的模板引擎（就像 `Vue` 的模板引擎一样）。
 
 ## Preface
