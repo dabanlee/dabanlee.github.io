@@ -12,7 +12,9 @@ code {
   color: #00cc80;
   background: #fafafa !important;
   font-family: Menlo, Consolas, monospace;
-  line-height: 1.4; }
+  line-height: 1.5;
+  font-size: 14px;
+  margin: 1rem 0; }
 
 .container {
   width: 100%;
@@ -85,27 +87,29 @@ body[data-page="home"] .article {
 .page-content {
   color: #333; }
   .page-content h1 {
-    font-size: 40px;
-    margin: 30px 0 36px; }
+    font-size: 40px; }
   .page-content h2 {
-    font-size: 24px;
-    margin: 26px 0 32px; }
+    font-size: 24px; }
   .page-content h3 {
-    font-size: 22px;
-    margin: 22px 0 28px; }
+    font-size: 22px; }
   .page-content h4 {
     font-size: 20px; }
-  .page-content h5 {
-    font-size: 18px; }
+  .page-content h5,
   .page-content h6 {
     font-size: 18px; }
+  .page-content h1,
+  .page-content h2,
+  .page-content h3,
   .page-content h4,
   .page-content h5,
   .page-content h6 {
-    margin: 20px 0 26px; }
-  .page-content p {
-    margin-bottom: 1.6rem;
-    line-height: 2; }
+    margin: 3rem 0 1rem; }
+  .page-content p,
+  .page-content li {
+    margin: 1rem 0;
+    line-height: 1.6; }
+  .page-content li {
+    margin: .5rem 0; }
   .page-content a {
     color: #000;
     font-weight: bold; }
