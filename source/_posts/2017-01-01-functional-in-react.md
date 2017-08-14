@@ -1,20 +1,21 @@
 ---
 layout: 		post
 title: 			React 中的函数式思想
-excerpt: 		"React 中的函数式思想"
+excerpts: 		"函数式编程中一个核心概念之一就是纯函数，如果一个函数满足一下几个条件，就可以认为这个函数是纯函数了："
 categories: 	note
 ---
 
 > 题图：[React Illustration](https://link.zhihu.com/?target=https%3A//dribbble.com/shots/2484828-React-Illustration)
 
-函数式编程简要概念
+## 函数式编程简要概念
 
 函数式编程中一个核心概念之一就是纯函数，如果一个函数满足一下几个条件，就可以认为这个函数是纯函数了：
 
-它是一个函数（废话）；
-当给定相同的输入（函数的参数）的时候，总是有相同的输出（返回值）；
-没有副作用；
-不依赖于函数外部状态。
+- 它是一个函数（废话）；
+- 当给定相同的输入（函数的参数）的时候，总是有相同的输出（返回值）；
+- 没有副作用；
+- 不依赖于函数外部状态。
+
 当一个函数满足以上条件的时候，就可以认为这个函数是纯函数了。举个栗子：
 
 ```js
@@ -39,9 +40,10 @@ addOne(1); // 2
 
 上面两个栗子中，第一个就是典型的非纯函数，当第一次执行 `addOne(1)` 其返回的值是 `2` 没有错，但是再次执行相同函数的时候，其返回的值不再是 `2` 了，而是变成了 `3` ，对比上面列出的满足纯函数的条件，就会发现：
 
-`addOne()` 给定相同的输入的时候没有返回相同的输出；
-`addOne()` 会产生副作用（会改变外部状态 `payload` ）；
-`addOne()` 依赖的外部状态 `payload` 。
+- `addOne()` 给定相同的输入的时候没有返回相同的输出；
+- `addOne()` 会产生副作用（会改变外部状态 `payload` ）；
+- `addOne()` 依赖的外部状态 `payload` 。
+
 而第二个栗子就是一个纯函数，它既不依赖外部状态也不会产生副作用，且当给定相同输入的时候，总是返回相同的输出（执行任意多次 `addOne(1)` 总是返回 `2` ）。
 
 以上对纯函数概念的一些简单理解。
@@ -50,7 +52,8 @@ React 核心理念
 
 官方给出的 React 的定义是：
 
-A JavaScript library for building user interfaces.
+> A JavaScript library for building user interfaces.
+
 即专注于构建 View 层的一个库。React 的核心开发者之一的 Sebastian Markbåge 认为：
 
 UI 只是把数据通过映射关系变成另一种形式的数据。给定相同的输入（数据）必然会有相同的输出（UI），即一个简单的纯函数。
@@ -99,9 +102,10 @@ export default class PostList extends Component {
 
 这个一个典型的渲染列表的栗子，在这个栗子中除了渲染 `PostList` 外，还进行了数据的获取和事件的操作，也就意味着这个 `PostList` 组件不是一个”纯函数“。严格意义上来说这个组件还不是一个可复用的组件，比如说有这样一种业务场景，除了首页有 `PostList` 组件以外，在个人页面同样有个 `PostList` 组件，UI 一致但是交互逻辑不一致，这种情况下就无法复用首页的 `PostList` 组件了。为了解决这个问题，我们可以再次抽离一个真正意义上可复用的 View 层，它有一下几个特点：
 
-给定相同的数据（由父组件通过 props 传递给子组件且是唯一数据来源），总是渲染相同的 UI 界面；
-组件你内部不改变数据状态；
-不处理交互逻辑。
+- 给定相同的数据（由父组件通过 props 传递给子组件且是唯一数据来源），总是渲染相同的 UI 界面；
+- 组件你内部不改变数据状态；
+- 不处理交互逻辑。
+
 可以发现，这个上面所列出的满足纯函数的条件非常相似，这种组件才算是真正意义上的可复用的组件，好了，Talk is cheap, show me the code:
 
 ```js
@@ -187,10 +191,10 @@ let PostList = ({ posts, toggleActive }) => (
 
 我们会发现 Stateless Functional Components 完美的诠释了前面所提到的 `data => View` 这个理念，不仅数据输入不依赖于 `this` 关键字，且书写风格也更像函数式风格。
 
-总结
+## 总结
 
 在平时的开发中，应该避免数据交互逻辑与数据渲染的过于耦合，严格区分 Container Component 和 Presentational Component 的职责不仅可以更容易的复用组件，而且也容易定位问题的所在。
 
-参考文章：
+## 参考文章：
 
 1. [Which Programming Languages Are Functional?](https://link.zhihu.com/?target=http%3A//blog.jenkster.com/2015/12/which-programming-languages-are-functional.html)

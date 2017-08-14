@@ -1,7 +1,7 @@
 ---
 layout: 		post
 title: 			如何实现一个简化版的 jQuery
-excerpt: 		''
+excerpts: 		'对于操作 DOM 来说，jQuery 是非常方便的一个库，虽然如今随着 React, Vue 之类框架的流行，jQuery 用得越来越少了，但是其中很多思想还是非常值得我们学习的，这篇文章将介绍如何从零开始实现一个简化版 jQuery。'
 categories: 	note
 ---
 

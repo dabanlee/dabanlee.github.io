@@ -1,7 +1,7 @@
 ---
 layout: 		post
 title: 			CSS 设计指南 学习笔记 一
-excerpt: 		"本篇文章是对这几天看完 Charles Wyke-Smit 的 《CSS 设计指南》 后的一些学习笔记与心得。"
+excerpts: 		"本篇文章是对这几天看完 Charles Wyke-Smit 的 《CSS 设计指南》 后的一些学习笔记与心得。"
 categories: 	CSS
 ---
 
@@ -160,17 +160,15 @@ padding-top 和 padding-bottom 对于行内元素是否可见：
 
 #### 2.3.4 通用选择器 *
 
-	*
-
 通用选择器 `*` 是一个是一个通配符，代表文档流中的任意元素，不过通用选择器 `*` 通常会搭配一些其他选择器来使用，比如：
 
-```
-section > *
+```css
+section > * {}
 ```
 
 代表 `section` 的所有子元素，不过一般情况下很少通过通配符来选择某个元素下的所有子元素，因为这涉及到浏览器性能问题，它会影响网页的渲染时间，我们写的时候是从左到右写的，但是浏览器渲染却是从右到左的，就上面这段代码来说，浏览器会先遍历所有的元素，然后在找出哪些元素的父元素是 `section`，另外举一个例子，有选择器：
 
-```
+```css
 div.container #main > .article {}
 ```
 
@@ -233,16 +231,19 @@ a[target="_blank"] {background-image: url(_blank.png);}
 
 其实除了以上两种属性选择器，还有其他几种属性选择器作者并没有列出来，这里这几种其他的属性选择器作一个简单的介绍：
 
-	标签名[name^="value"]  让你匹配属性为 `name` 并且属性值以 `value` 开始的标签，如:a[href^= "http://"]则匹配所有具有 `href` 属性并且属性值以 `http://` 开始的标签。
+- 标签名[name^="value"]  让你匹配属性为 `name` 并且属性值以 `value` 开始的标签，如:a[href^= "http://"]则匹配所有具有 `href` 属性并且属性值以 `http://` 开始的标签。
 
-	标签名[name$="value"]  让你匹配属性为 `name` 并且属性值以 `value` 结束的标签，如:a[href$=".com"]则匹配所有具有 `href` 属性并且属性值以 `http://` 结束的标签。
+- 标签名[name$="value"]  让你匹配属性为 `name` 并且属性值以 `value` 结束的标签，如:a[href$=".com"]则匹配所有具有 `href` 属性并且属性值以 `http://` 结束的标签。
 
-	标签名[name*="value"]  让你匹配属性为 `name` 并且属性值包含 `value` 的标签，如:a[href*= "renren"]则匹配所有具有 `href` 属性并且属性值包含 `http://` 的标签。
+- 标签名[name*="value"]  让你匹配属性为 `name` 并且属性值包含 `value` 的标签，如:a[href*= "renren"]则匹配所有具有 `href` 属性并且属性值包含 `http://` 的标签。
 
-	标签名[name|="value"]  让你匹配属性为 `name` 或者以 `name-` 开始的标签，如:p[lang|= "en"]则匹配具有 `lang` 属性的 `p` 标签，不管其属性值是 `en` 还是 `en-us` 。
+- 标签名[name|="value"]  让你匹配属性为 `name` 或者以 `name-` 开始的标签，如:p[lang|= "en"]则匹配具有 `lang` 属性的 `p` 标签，不管其属性值是 `en` 还是 `en-us` 。
 
-	标签名[name~="value"]  让你匹配属性为 `name` 并且其属性值是具有多个空格分隔的值，其中一个值为 `value`，如有：
-	<a title="I'm title for learn more">Learn More</a>
+- 标签名[name~="value"]  让你匹配属性为 `name` 并且其属性值是具有多个空格分隔的值，其中一个值为 `value`，如有：
+    ```html
+<a title="I'm title for learn more">Learn More</a>
+    ```
+
 	就可以用 p[title~="learn"] 来选择这个元素。
 
 你应该注意到了这些属性选择器与前面两种属性选择器之间的差别了，通过这些属性选择器我们可以很容易的做出许多意想不到的效果，比如：
@@ -261,7 +262,7 @@ a[href$=".pdf"] {background-image: url(pdf.png);}
 
 - 结构化伪类：会在标记中纯在某种结构上的关系时（比如某个元素是一组元素的第一个或者最有一个元素），为相应的元素应用 CSS 样式。
 
-#### 2.6.1 UI伪类
+#### 2.6.1 UI 伪类
 
 1. 链接伪类
 
@@ -303,12 +304,12 @@ a[href$=".pdf"] {background-image: url(pdf.png);}
 
 #### 2.6.2 结构化伪类
 
-1. first-child 、 last-child 和 nth-child(n)
+1. `first-child`, `last-child` 和 `nth-child(n)`
 
 		e:first-child
 		e:last-child
 
-	`first-child` 和 `last-child` 分别代表一组同胞元素中的第一个元素和最后一个元素，而 `nth-child(n)` 则代表一组同胞元素中的任何一个元素，其中 n 表示一个整数（也可以是 odd-奇数 或 even-偶数）或者也可以是一个算数表达式（2n + 1），例如：
+	`first-child` 和 `last-child` 分别代表一组同胞元素中的第一个元素和最后一个元素，而 `nth-child(n)` 则代表一组同胞元素中的任何一个元素，其中 `n` 表示一个整数（也可以是 odd-奇数 或 even-偶数）或者也可以是一个算数表达式（2n + 1），例如：
 
 		<ul>
 			<li>My Fast Pony</li>
@@ -380,15 +381,15 @@ a[href$=".pdf"] {background-image: url(pdf.png);}
 
 作者在这一节中介绍了样式的几种来源：
 
-	- 浏览器默认样式表
+- 浏览器默认样式表
 
-	- 用户样式表
+- 用户样式表
 
-	- 作者链接样式表
+- 作者链接样式表
 
-	- 作者嵌入样式
+- 作者嵌入样式
 
-	- 作者行内样式
+- 作者行内样式
 
 作者在书中是这么描述的：
 
@@ -398,13 +399,14 @@ a[href$=".pdf"] {background-image: url(pdf.png);}
 
 作者在这一节主要介绍了特指度的计算方法，相比作者个计算方式，笔者个人还是比较喜欢自己之前的计算方式，虽然差不多，如下：
 
-	// 首先规定四个等级：A - B - C - D
-	1. A 等级代表内联样式：例如 `style=" "`，权值为：1000；
-	2. B 等级代表 ID 选择器：例如 `#main`，权值为：100；
-	3. C 等级代表类、伪类和属性选择器： `.class` 和 `[title]`，权值为：10；
-	4. D 等级代表元素（标签）名或者伪元素选择器：例如 `p` 和 `::after`，权值为：1。
+首先规定四个等级：A - B - C - D
 
-	//计算完每个值后再将每个值加起来，哪个值大哪个值的权重就高。
+1. A 等级代表内联样式：例如 `style=" "`，权值为：1000；
+2. B 等级代表 ID 选择器：例如 `#main`，权值为：100；
+3. C 等级代表类、伪类和属性选择器： `.class` 和 `[title]`，权值为：10；
+4. D 等级代表元素（标签）名或者伪元素选择器：例如 `p` 和 `::after`，权值为：1。
+
+计算完每个值后再将每个值加起来，哪个值大哪个值的权重就高。
 
 例如:
 

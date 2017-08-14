@@ -1,7 +1,7 @@
 ---
 layout: 		post
 title: 			CSS 设计指南 学习笔记 二
-excerpt: 		"本篇文章是对这几天看完 Charles Wyke-Smit 的 《CSS 设计指南》 后的一些学习笔记与心得。"
+excerpts: 		"本篇文章是对这几天看完 Charles Wyke-Smit 的 《CSS 设计指南》 后的一些学习笔记与心得。"
 categories: 	CSS
 ---
 
