@@ -1,0 +1,13 @@
+menus:
+    HOME: /
+    # ARCHIVE: /archives/
+    GITHUB: https://github.com/justclear
+    # ABOUT: /about/
+
+favicon: /favicon.png
+logo: /images/logo.png
+title: Just
+description: ''
+url: http://justclear.github.io/
+# url: http://localhost:4000/
+startyear: 2017
