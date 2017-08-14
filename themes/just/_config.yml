@@ -5,9 +5,8 @@ menus:
     # ABOUT: /about/
 
 favicon: /favicon.png
-logo: /images/logo.png
+logo: /images/logo.jpg
 title: Just
 description: ''
 url: http://justclear.github.io/
-# url: http://localhost:4000/
 startyear: 2017

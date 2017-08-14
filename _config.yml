@@ -12,8 +12,8 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-# url: https://justclear.github.io/
-url: http://localhost:4000/
+url: https://justclear.github.io/
+# url: http://localhost:4000/
 root: /
 permalink: :title/
 permalink_defaults:
