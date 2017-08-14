@@ -12,7 +12,8 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://justclear.github.io/
+# url: https://justclear.github.io/
+url: http://localhost:4000/
 root: /
 permalink: :title/
 permalink_defaults:
@@ -37,11 +38,10 @@ render_drafts: false
 post_asset_folder: false
 relative_link: false
 future: true
-# highlight:
-#   enable: true
-#   line_number: true
-#   auto_detect: false
-#   tab_replace:
+highlight:
+  enable: false
+hljs:
+  enable: true
 
 # Category & Tag
 default_category: uncategorized
@@ -63,7 +63,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: just-me
+theme: just
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
