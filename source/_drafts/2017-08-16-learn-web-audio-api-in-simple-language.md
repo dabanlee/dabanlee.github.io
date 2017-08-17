@@ -85,11 +85,15 @@ buffer && playAudio(buffer);
 
 你可以试着以这种方式来理解这三个关键点：首先我们通过 `audioContext.createBufferSource()` 方法创建了一个「容器」 `source` 并装入接收进来的「水」 `buffer`；其次通过「管道」 `connect` 把它和「出口」 `destination` 连接起来；最终「出口」 `destination` 「流」出来的就是我们所听到的音频了。不知道这么讲，大家有没有比较好理解。
 
+![AudioContext](/images/posts/learn-web-audio-api-in-simple-language/audio-context.png)
+
 或者也可以拿 webpack 的配置文件来类比：
 
 ```js
 module.exports = {
+    // source.buffer
     entry: 'main.js',
+    // destination
     output: {
         filename: 'app.js',
         path: '/path/to/dist',
@@ -101,16 +105,16 @@ module.exports = {
 
 **重点理解这三个关键点的关系**。
 
-**注意：`<audio>` 元素和 Web audio API 是不一样的，它们之间的关系大概像这样：**
+**注意：`Audio` 元素和 Web Audio API 是不一样的，它们之间的关系大概像这样：**
 
-![Web audio API and audio element]()
+![Web audio API and Audio](/images/posts/learn-web-audio-api-in-simple-language/audio-and-web-audio.png)
 
-**`<audio>` 元素：**
+**`Audio` 元素：**
 
 - 简单的音频播放器；
 - 「单线程」的音频；
 
-**Web audio API:**
+**Web Audio API:**
 
 - 音频合成；
 - 可以做音频的各种处理；
@@ -142,6 +146,8 @@ console.log(source instanceof AudioNode); // true
 
 #### GainNode
 
+![GainNode](/images/posts/learn-web-audio-api-in-simple-language/gain-node.png)
+
 前面有提到音频处理是通过一个个「处理器」来处理的，那么在实际应用中怎么把我们想要的「处理器」装上去呢？
 
 Don't BB, show me the code:
@@ -163,6 +169,8 @@ const updateVolume = volume => gainNode.gain.value = volume;
 [Full Demo](./)
 
 #### BiquadFilterNode
+
+![BiquadFilterNode](/images/posts/learn-web-audio-api-in-simple-language/biquad-filter-node.png)
 
 不知道怎么翻译这个「处理器」，暂且叫做低阶滤波器吧，简单来说它就是一个通过过滤音频的数字信号进而达到控制 **音调** 的音频节点。把它装上：
 
@@ -214,7 +222,25 @@ rangeX.addEventListener('input', () => pannerNode.setPosition(rangeX.value, 0, 0
 
 #### 多个音频源
 
+前面有提到过，在 `AudioContext` 中可以同时使用多个「处理器」去处理一个音频源，那么多个音频源 `source` 可以同时输出吗？答案当然也是肯定的，在 `AudioContext` 中可以有多个音频处理通道，它们之间互不影响：
+
+![cross fading](/images/posts/learn-web-audio-api-in-simple-language/cross-fading.png)
+
+```js
+const sourceOne = audioContext.createBufferSource();
+const sourceTwo = audioContext.createBufferSource();
+const gainNode = audioContext.createGain();
+
+sourceOne.connect(gainNode);
+sourceTwo.connect(gainNode);
+gainNode.connect(audioContext.destination);
+```
+
+[Full Demo](./)
+
 ### 模块化(`Modular`)
+
+![Modular](/images/posts/learn-web-audio-api-in-simple-language/modular.png)
 
 通过前面 **音频节点** 的介绍，相信你们已经感受到了 Web Audio 的模块化设计了，它提供了一种非常方便的方式来为音频装上(`connect`)不同的「处理器」 `AudioNode`。不仅一个音频源可以使用多个「处理器」，而多个音频源也可以合并为一个「输出」 `destination`。
 
