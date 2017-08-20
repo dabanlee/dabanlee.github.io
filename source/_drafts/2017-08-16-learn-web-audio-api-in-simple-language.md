@@ -287,8 +287,11 @@ module.exports = {
 
 现在我们知道了，音频的处理都是通过 **音频节点** 来处理的，而多个音频节点 `connect` 到一起就形成了 **音频导向图（Audio Routing Graph）**，简而言之就是多个相互连接在一起的音频节点。
 
+## 总结
+
+本文展示的仅仅只是 Web Audio 众多 API 中的冰山一角，如果想更深入了解 Web Audio 的话，建议可以去查阅相关文档。尽管如此，利用上面介绍的一些 API 也足够做出一些有意思的音乐效果来了。
+
 ## 参考资料
 
-1. [Web Audio Api](https://developer.mozilla.org/en/docs/Web/API/Web_Audio_API)
-2. [Audio Graphs](https://docs.microsoft.com/en-us/windows/uwp/audio-video-camera/audio-graphs)
-3. [Getting Started with Web Audio API](https://www.html5rocks.com/en/tutorials/webaudio/intro/)
+1. [Web Audio Api - MDN](https://developer.mozilla.org/en/docs/Web/API/Web_Audio_API)
+2. [Getting Started with Web Audio API](https://www.html5rocks.com/en/tutorials/webaudio/intro/)
