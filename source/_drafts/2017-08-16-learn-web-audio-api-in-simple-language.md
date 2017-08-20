@@ -105,16 +105,16 @@ module.exports = {
 
 **重点理解这三个关键点的关系**。
 
-**注意：`Audio` 元素和 Web Audio API 是不一样的，它们之间的关系大概像这样：**
+**注意：`Audio` 和 Web Audio 是不一样的，它们之间的关系大概像这样：**
 
 ![Web audio API and Audio](/images/posts/learn-web-audio-api-in-simple-language/audio-and-web-audio.png)
 
-**`Audio` 元素：**
+**`Audio`:**
 
 - 简单的音频播放器；
 - 「单线程」的音频；
 
-**Web Audio API:**
+**Web Audio:**
 
 - 音频合成；
 - 可以做音频的各种处理；
@@ -164,11 +164,11 @@ gainNode.connect(source.destination);
 const updateVolume = volume => gainNode.gain.value = volume;
 ```
 
-可以发现和上面提到的 `playAudio` 方法很像，区别只是 `source` 不直接 connect 到 `source.destination`，而是先 connect 到 `gainNode`，然后再通过 `gainNode` connect 到 `source.destination`。这样其实就把「音量处理器」装载上去了，此时我们通过更新 `gainNode.gain.value` 的值就可以控制音量的大小了。
+可以发现和上面提到的 `playAudio` 方法很像，区别只是 `source` 不直接 connect 到 `source.destination`，而是先 connect 到 `gainNode`，然后再通过 `gainNode` connect 到 `source.destination`。这样其实就把「音量处理器」装载上去了，此时我们通过更新 `gainNode.gain.value` 的值（`0 - 1` 之间）就可以控制音量的大小了。
 
 [Full Demo](./)
 
-#### BiquadFilterNode
+#### BiquadFilterNode(waiting for perfection)
 
 ![BiquadFilterNode](/images/posts/learn-web-audio-api-in-simple-language/biquad-filter-node.png)
 
@@ -183,7 +183,11 @@ filterNode.connect(source.destination);
 const updateFrequency = frequency => filterNode.frequency.value = frequency;
 ```
 
-这样一来我们就可以通过 `updateFrequency()` 方法来控制音频的音调了。
+这样一来我们就可以通过 `updateFrequency()` 方法来控制音频的音调（频率）了。当然，除了 `frequency` 我们还可以调整的属性还有（[MDN Docs](https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode)）：
+
+- `.Q`: quality factor;
+- `.type`: lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass;
+- `.detune`: detuning of the frequency in cents.
 
 [Full Demo](./)
 
@@ -206,11 +210,11 @@ pannerNode.connect(source.destination);
 rangeX.addEventListener('input', () => pannerNode.setPosition(rangeX.value, 0, 0));
 ```
 
-[Full Demo](./)
-
 还是老方法「装上」 `PannerNode` 「处理器」，然后通过监听 `range` 控件的 `input` 事件，通过 `.setPosition()` 方法更新 **声源相对于听音者的位置**，这里我只简单的更新了声源相对于听音者的 `X` 方向上的距离，当值为负值时，声音在左边，反之则在右边。
 
-你可以这么去理解 `PannerNode`，它把你（听音者）置身于一个四面八方都非常空旷安静的空间中，其中还有一个音响（声源），而 `.setPosition()` 方法就是用来控制音响在空间中 **相对于你（听音者）** 的位置的，所以上面这段代码可以控制声源在你左右俩耳边来回晃动（带上耳机）。
+你可以这么去理解 `PannerNode`，它把你（听音者）置身于一个四面八方都非常空旷安静的空间中，其中还有一个音响（声源），而 `.setPosition()` 方法就是用来控制 **音响** 在空间中 **相对于你（听音者）** 的位置的，所以上面这段代码可以控制声源在你左右俩耳边来回晃动（带上耳机）。
+
+[Full Demo](./)
 
 当然，对于 `PannerNode` 来说，还有许多属性可以使得 3D 环绕音效听上去更逼真，比如：
 
@@ -229,11 +233,13 @@ rangeX.addEventListener('input', () => pannerNode.setPosition(rangeX.value, 0, 0
 ```js
 const sourceOne = audioContext.createBufferSource();
 const sourceTwo = audioContext.createBufferSource();
-const gainNode = audioContext.createGain();
+const gainNodeOne = audioContext.createGain();
+const gainNodeTwo = audioContext.createGain();
 
-sourceOne.connect(gainNode);
-sourceTwo.connect(gainNode);
-gainNode.connect(audioContext.destination);
+sourceOne.connect(gainNodeOne);
+sourceTwo.connect(gainNodeTwo);
+gainNodeOne.connect(audioContext.destination);
+gainNodeTwo.connect(audioContext.destination);
 ```
 
 [Full Demo](./)
@@ -274,6 +280,12 @@ module.exports = {
 再次发现，Web Audio Api 和 webpack 的设计理念如此的相似。
 
 ### 音频图(`Audio Graph`)
+
+![Audio Graph](/images/posts/learn-web-audio-api-in-simple-language/audio-graph.png)
+
+> An audio graph is a set of interconnected audio nodes.
+
+现在我们知道了，音频的处理都是通过 **音频节点** 来处理的，而多个音频节点 `connect` 到一起就形成了 **音频导向图（Audio Routing Graph）**，简而言之就是多个相互连接在一起的音频节点。
 
 ## 参考资料
 
