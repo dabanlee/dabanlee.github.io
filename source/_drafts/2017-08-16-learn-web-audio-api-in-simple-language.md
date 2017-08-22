@@ -166,7 +166,7 @@ const updateVolume = volume => gainNode.gain.value = volume;
 
 可以发现和上面提到的 `playAudio` 方法很像，区别只是 `source` 不直接 connect 到 `source.destination`，而是先 connect 到 `gainNode`，然后再通过 `gainNode` connect 到 `source.destination`。这样其实就把「音量处理器」装载上去了，此时我们通过更新 `gainNode.gain.value` 的值（`0 - 1` 之间）就可以控制音量的大小了。
 
-[Full Demo](./)
+[Full Demo](https://justclear.github.io/web-audio-examples/gain-node.html)
 
 #### BiquadFilterNode(waiting for perfection)
 
@@ -189,7 +189,7 @@ const updateFrequency = frequency => filterNode.frequency.value = frequency;
 - `.type`: lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass;
 - `.detune`: detuning of the frequency in cents.
 
-[Full Demo](./)
+[Full Demo](https://justclear.github.io/web-audio-examples/biquad-filter-node.html)
 
 #### PannerNode
 
@@ -214,7 +214,7 @@ rangeX.addEventListener('input', () => pannerNode.setPosition(rangeX.value, 0, 0
 
 你可以这么去理解 `PannerNode`，它把你（听音者）置身于一个四面八方都非常空旷安静的空间中，其中还有一个音响（声源），而 `.setPosition()` 方法就是用来控制 **音响** 在空间中 **相对于你（听音者）** 的位置的，所以上面这段代码可以控制声源在你左右俩耳边来回晃动（带上耳机）。
 
-[Full Demo](./)
+[Full Demo](https://justclear.github.io/web-audio-examples/panner-node.html)
 
 当然，对于 `PannerNode` 来说，还有许多属性可以使得 3D 环绕音效听上去更逼真，比如：
 
@@ -242,7 +242,7 @@ gainNodeOne.connect(audioContext.destination);
 gainNodeTwo.connect(audioContext.destination);
 ```
 
-[Full Demo](./)
+[Full Demo](https://justclear.github.io/web-audio-examples/cross-fading.html)
 
 ### 模块化(`Modular`)
 
