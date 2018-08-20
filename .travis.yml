@@ -30,4 +30,6 @@ install:
   - npm install
 
 script:
-  - hexo clean && hexo g -d
+  - hexo clean
+  - hexo generate
+  - hexo deploy
