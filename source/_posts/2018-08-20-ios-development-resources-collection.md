@@ -34,8 +34,8 @@ categories:     swift
 
 ## 视频教程
 
-[iOS Development with Swift Tutorial](https://www.youtube.com/watch?v=83WXmhin_LU)
-[小波说雨燕](http://www.swiftv.cn/course/iwn51f6c)
+- [iOS Development with Swift Tutorial](https://www.youtube.com/watch?v=83WXmhin_LU)
+- [小波说雨燕](http://www.swiftv.cn/course/iwn51f6c)
 
 ## 开源库
 
