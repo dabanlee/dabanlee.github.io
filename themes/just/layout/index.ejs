@@ -11,7 +11,9 @@
                 </h2>
             </header>
             <section class="article-excerpt">
-                 <p><%= post.excerpts %> ...</p>
+                <% if (post.excerpts != '') { %>
+                    <p><%= post.excerpts %> ...</p>
+                <% } %>
             </section>
             <footer class="article-meta">
                 <span><%= post.author || config.author %></span>
