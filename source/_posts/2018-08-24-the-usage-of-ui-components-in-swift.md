@@ -178,3 +178,27 @@ class ViewController: UIViewController, UICollectionViewDelegate, UIImagePickerC
     }
 }
 ```
+
+## UISwitch
+
+```swift
+import UIKit
+
+class ViewController: UIViewController {
+    var buttonSwitch: UISwitch!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        buttonSwitch = UISwitch()
+        // default to `true`
+        buttonSwitch.isOn = true;
+        buttonSwitch.addTarget(self, action: #selector(switchDidChange), for: .valueChanged)
+        self.view.addSubview(buttonSwitch);
+    }
+
+    @objc func switchDidChange() {
+        print(buttonSwitch.isOn)
+    }
+}
+```

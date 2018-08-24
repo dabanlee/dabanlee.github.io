@@ -32,6 +32,7 @@ categories:     swift
 - [SWIFT Mastering Swift: Enumerations, Closures, Generics, Protocols and High Order Functions](https://appcoda.com/mastering-swift/)
 - [IOS Introduction to User Notifications Framework in iOS 10](https://appcoda.com/ios10-user-notifications-guide/)
 - [Introducing Firebase with Swift 3: Login and Sign Up](https://appcoda.com/firebase-login-signup/)
+- [Swift — Create Custom TableView Cell with programmatically in iOS](https://medium.com/@kemalekren/swift-create-custom-tableview-cell-with-programmatically-in-ios-835d3880513d)
 
 ## 视频教程
 
