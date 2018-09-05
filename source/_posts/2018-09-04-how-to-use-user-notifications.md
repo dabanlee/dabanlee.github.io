@@ -37,7 +37,6 @@ import UIKit
 import UserNotifications
 
 class ViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -48,20 +47,6 @@ class ViewController: UIViewController {
         content.badge = 1
         content.body = "这是通知消息的主要内容"
         content.sound = UNNotificationSound(named: "sound")
-
-        // The unique identifier for this notification request.
-        // It can be used to replace or remove a pending notification request or a delivered notification.
-        let identify = "io.justx.openApp"
-        // The trigger that will or did cause the notification to be delivered. No trigger means deliver now.
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        let request = UNNotificationRequest(identifier: identify, content: content, trigger: trigger)
-
-        // add request to notification center
-        UNUserNotificationCenter.current().add(request) { error in
-            if error == nil {
-                //
-            }
-        }
     }
 }
 ```
@@ -88,9 +73,9 @@ let identify = "io.justx.openApp"
 
 `UserNotifications` 提供了三种「触发器」：
 
-    - `UNTimeIntervalNotificationTrigger`: 一段时间后触发
-    - `UNCalendarNotificationTrigger`: 指定时间触发
-    - `UNLocationNotificationTrigger`: 指定位置范围触发
+- `UNTimeIntervalNotificationTrigger`: 一段时间后触发
+- `UNCalendarNotificationTrigger`: 指定时间触发
+- `UNLocationNotificationTrigger`: 指定位置范围触发
 
 **一点时间后触发**：
 
@@ -159,6 +144,40 @@ let request = UNNotificationRequest(identifier: identify, content: content, trig
 UNUserNotificationCenter.current().add(request) { error in
     if error == nil {
         //
+    }
+}
+```
+
+## 完整代码
+
+```swift
+import UIKit
+import UserNotifications
+
+class ViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // notification content
+        let content = UNMutableNotificationContent()
+        content.title = "大板栗"
+        content.subtitle = "这是副标题"
+        content.badge = 1
+        content.body = "这是通知消息的主要内容"
+        content.sound = UNNotificationSound(named: "sound")
+
+        // The unique identifier for this notification request.
+        // It can be used to replace or remove a pending notification request or a delivered notification.
+        let identify = "io.justx.openApp"
+        // The trigger that will or did cause the notification to be delivered. No trigger means deliver now.
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let request = UNNotificationRequest(identifier: identify, content: content, trigger: trigger)
+
+        // add request to notification center
+        UNUserNotificationCenter.current().add(request) { error in
+            if error == nil {
+                //
+            }
+        }
     }
 }
 ```
