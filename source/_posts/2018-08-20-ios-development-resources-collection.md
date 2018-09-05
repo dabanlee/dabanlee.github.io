@@ -11,6 +11,8 @@ categories:     swift
 - [AppCoda](https://appcoda.com/)
 - [Raywenderlich](https://www.raywenderlich.com/)
 - [Netguru - iOS](https://www.netguru.co/codestories/topic/ios)
+- [Hacking With Swift](https://www.hackingwithswift.com/articles)
+- [Belka](https://belka.us/en/blognews/)
 
 ## 文章教程
 
