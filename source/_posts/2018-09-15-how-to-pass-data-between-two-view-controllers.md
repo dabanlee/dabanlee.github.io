@@ -120,7 +120,7 @@ class viewC: UIViewController {
         super.viewDidLoad()
 
         // 发送通知
-        NotificationCenter.default.post(name: NSNotification.Name.init("notifyName"), object: "data from viewC")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "notifyName"), object: "data from viewC")
     }
 }
 ```
