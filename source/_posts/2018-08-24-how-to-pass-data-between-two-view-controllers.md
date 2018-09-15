@@ -9,9 +9,9 @@ categories:     swift
 
 - 属性传值
 - 代理传值
-- 闭包传值
 - 通知传值
 - 单例传值
+- 闭包传值
 
 ### 属性传值
 
@@ -72,11 +72,12 @@ class ViewA: UIViewController, CustomDelegate {
     }
 }
 
+// ViewB
+
 protocol CustomDelegate: NSObjectProtocol {
     func passValue(_ text: String)
 }
 
-// ViewB
 class ViewB: UIViewController {
     weak var delegate: CustomDelegate?
 
