@@ -11,7 +11,7 @@ categories:
 
 ## 将 SSH Key 添加到 Github 中
 
-执行上面命令后，会在 `~/.ssh` 目录生成两个文件，分别是 `id_rsa.pub` 和 `id_rsa`，分别对应着「公钥」和「私钥」。我们把 `id_rsa.pub` 的内容添加到 GitHub 中（https://github.com/settings/ssh），然后保存即可。
+执行上面命令后，会在 `~/.ssh` 目录生成两个文件，分别是 `id_rsa.pub` 和 `id_rsa`，分别对应着「公钥」和「私钥」。我们把 `id_rsa.pub` 的内容添加到 [GitHub](https://github.com/settings/ssh) 中，然后保存即可。
 
 ## Travis CI 配置
 
@@ -24,12 +24,12 @@ $ gem install travis
 
 ### 登陆 Travis CI
 
+此时输入 GitHub 账号和密码即可。
+
 ```sh
 # 需要提前装好 gem
 $ travis login --auto
 ```
-
-此时输入 GitHub 账号和密码即可。
 
 ### 加密私钥并上传至 Travis CI
 
@@ -55,7 +55,7 @@ IdentityFile ~/.ssh/id_rsa
 IdentitiesOnly yes
 ```
 
-最后指定 `openssl` 解密后生成的位置：
+### 指定 `openssl` 解密后生成的位置：
 
 ```yml
 - openssl aes-256-cbc -K $encrypted_26b4962af0e7_key -iv $encrypted_26b4962af0e7_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
