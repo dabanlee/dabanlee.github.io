@@ -46,7 +46,7 @@ public function transform(Post $post)
 }
 ```
 
-注意，此时配置完转换文件后，并不会生效，还需要在 `PostRepositoryEloquent` 中「启用展示」才会生效：
+**注意，此时配置完转换文件后，并不会生效，还需要在 `PostRepositoryEloquent` 中「启用展示」才会生效：**
 
 ```php
 use App\Presenters\PostPresenter;
