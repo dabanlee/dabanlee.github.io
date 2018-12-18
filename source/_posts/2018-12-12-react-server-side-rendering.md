@@ -1,8 +1,10 @@
 ---
 layout:         post
-title:          '如何用 React 进行服务端渲染'
+title:          '如何用 React 做服务端渲染'
 excerpts:       '服务端渲染的一些优缺点这里就不说了，相信大家都已经非常清楚地知道了，本文意在讲述如何将一个简单的浏览器端渲染的 `React SPA` 循序渐进地升级为支持服务端渲染。'
 ---
+
+> Photo by [Stage 7 Photography](https://unsplash.com/@stage7photography)
 
 服务端渲染的一些优缺点这里就不说了，相信大家都已经非常清楚地知道了，本文意在讲述如何将一个简单的浏览器端渲染的 `React SPA` 循序渐进地升级为支持服务端渲染。
 
@@ -58,8 +60,6 @@ export default () => (
 // Post.jsx
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-
-import fetchData from '../helpers/fetchData';
 
 export default class Post extends Component {
     constructor(props) {
@@ -426,21 +426,3 @@ export default class Post extends Component {
 本文的目的是让一些对 **React Server Side Rendering** 技术还不太了解或者没什么概念的同学对服务端渲染有个初步的了解。
 
 如需查看完整的项目，请移步 [Github](https://github.com/JustClear/react-ssr)。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--  -->
