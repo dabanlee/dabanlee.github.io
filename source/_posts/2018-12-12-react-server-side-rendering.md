@@ -421,7 +421,7 @@ export default class Post extends Component {
 
 ## 总结
 
-现在 **`React` 服务端渲染** 支持算是基本完成了，当然这还远远不够，实际项目中运用的话肯定会复杂很多，比如通过 [Webpack Dynamic Imports](https://webpack.js.org/guides/code-splitting/#dynamic-imports) 和 [react-loadable](https://github.com/jamiebuilds/react-loadable) 等工具来优化代码等等等等。
+现在 **`React` 服务端渲染** 支持算是基本完成了，当然这还远远不够，实际项目中运用的话肯定会复杂很多，比如通过 [Webpack Dynamic Imports](https://webpack.js.org/guides/code-splitting/#dynamic-imports) 和 [react-loadable](https://github.com/jamiebuilds/react-loadable) 等工具来优化代码以及如何配合 `Redux` 来使用等等等等。
 
 本文的目的是让一些对 **React Server Side Rendering** 技术还不太了解或者没什么概念的同学对服务端渲染有个初步的了解。
 
