@@ -5,7 +5,7 @@ excerpts: 		'对于操作 DOM 来说，jQuery 是非常方便的一个库，虽�
 categories: 	note
 ---
 
-对于操作 DOM 来说，jQuery 是非常方便的一个库，虽然如今随着 React, Vue 之类框架的流行，jQuery 用得越来越少了，但是其中很多思想还是非常值得我们学习的，这篇文章将介绍如何从零开始实现一个简化版 jQuery。
+对于操作 `DOM` 来说，`jQuery` 是非常方便的一个库，虽然如今随着 `React`, `Vue` 之类框架的流行，`jQuery` 用得越来越少了，但是其中很多思想还是非常值得我们学习的，这篇文章将介绍如何从零开始实现一个简化版 `jQuery`。
 
 在这里，我把这个库命名为 [Clus(class 的谐音)](https://github.com/JustClear/clus)，下面以 `$` 符号代替。
 
@@ -26,10 +26,11 @@ $.fn = $.prototype = {
 
 ```js
 function init(selector) {
-    let dom,
-        fragmentRE = /^\s*<(\w+|!)[^>]*>/,
-        selectorType = $.type(selector),
-        elementTypes = [1, 9, 11];
+    const fragmentRE = /^\s*<(\w+|!)[^>]*>/;
+    const selectorType = $.type(selector);
+    const elementTypes = [1, 9, 11];
+
+    let dom;
 
     if (!selector) {
         dom = [],
@@ -61,7 +62,7 @@ function init(selector) {
 }
 ```
 
-可以很清楚的看到，根据传入的参数类型的不同进行一些不同的操作，比如传入的是函数的话，则该函数里的操作的都是 DOM Ready 之后的操作了；再比如传入的是字符串的话，并且如果是标签的话，则会把这段标签字符串解析成 DOM Fragment，如果是普通字符串，则会调用 `document.querySelectorAll()` 方法来查找 DOM。
+可以很清楚的看到，根据传入的参数类型的不同进行一些不同的操作，比如传入的是函数的话，则该函数里的操作的都是 `DOM Ready` 之后的操作了；再比如传入的是字符串的话，并且如果是标签的话，则会把这段标签字符串解析成 `DOM Fragment`，如果是普通字符串，则会调用 `document.querySelectorAll()` 方法来查找 DOM。
 
 相信大家都能很容易的看明白上面的代码，不过有一点值得一提的是 `$.extend(dom, $.fn);` 这段代码，其含义是把实例上的所有方法都添加到 `dom` 这个数组对象中，这样做的目的就是为了可以直接链式调用某个实例的方法，比如 `$('.clus').addClass('hello')`，这个 `addClass()` 方法就是在 `$.fn` 上实现的。因此所有在 `$.fn` 实现的方法都可以通过 `$(selector).method()` 这种方式来调用了。
 
@@ -127,7 +128,7 @@ export default function extend() {
 }
 ```
 
-可以看到，和 jQuery 的实现一毛一样，没错就是从那儿 copy 过来的当然一样。
+可以看到，和 `jQuery` 的实现一毛一样，没错就是从那儿 copy 过来的当然一样。
 
 下面以 `addClass()` 方法为例介绍如何操作 DOM 的：
 
@@ -187,6 +188,6 @@ function append(DOMString) {
 $.fn.append = append;
 ```
 
-上面是 `append()` 的实现，首先先解析 DOMString 为 fregment，然后就是遍历查询到的元素（通过 `this` 关键字）并针对每个元素去进行 `appendChild()` 的操作，从而把 DOM 插入到匹配到的所有元素中。
+上面是 `append()` 的实现，首先先解析 `DOMString` 为 `fregment`，然后就是遍历查询到的元素（通过 `this` 关键字）并针对每个元素去进行 `appendChild()` 的操作，从而把 `DOM` 插入到匹配到的所有元素中。
 
 其他实例方法也是通过类似的方式实现的，这里就不一一细说了，想更详细的查看其他方法的实现可以直接到 [Clus](https://github.com/JustClear/clus) 中查看源码。
