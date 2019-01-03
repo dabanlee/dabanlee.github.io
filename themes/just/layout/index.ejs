@@ -22,6 +22,14 @@
             </footer>
         </article>
         <% }); %>
+        <div class="pagination">
+            <% if (page.prev != 0) { %>
+                <a href="/<%= page.prev_link %>" class="page-prev">上一页</a>
+            <% } %>
+            <% if (page.next != 0) { %>
+                <a href="/<%= page.next_link %>" class="page-next">下一页</a>
+            <% } %>
+        </div>
     </div>
 </div>
 

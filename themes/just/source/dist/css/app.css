@@ -52,6 +52,25 @@ code {
     .nav .menu a {
       font-weight: bold; }
 
+.pagination {
+  margin-top: 20px;
+  padding: 10px 0; }
+  .pagination .page-prev,
+  .pagination .page-next {
+    display: block;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 10px;
+    font-size: 24px;
+    text-align: center;
+    -webkit-box-shadow: 0 0 2px #aaa;
+            box-shadow: 0 0 2px #aaa; }
+  .pagination .page-prev {
+    float: left; }
+  .pagination .page-next {
+    float: right; }
+
 body[data-page="home"] h2 {
   margin: 0;
   margin-bottom: 20px; }

@@ -33,3 +33,28 @@
         }
     }
 }
+
+.pagination {
+        margin-top: 20px;
+        padding: 10px 0;
+
+        .page-prev,
+        .page-next {
+            display: block;
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: center;
+            box-shadow: 0 0 2px #aaa;
+        }
+
+        .page-prev {
+            float: left;
+        }
+
+        .page-next {
+            float: right;
+        }
+    }
