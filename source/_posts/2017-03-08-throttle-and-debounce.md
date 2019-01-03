@@ -17,16 +17,19 @@ categories: 	note
 这里以判断页面是否滚动到底部为例，普通的做法就是监听 `window` 对象的 `scroll` 事件，然后再函数体中写入判断是否滚动到底部的逻辑：
 
 ```js
-$(window).on('scroll', function () {
+function onScroll() {
     // 判断是否滚动到底部的逻辑
-    let pageHeight = $('body').height(),
-        scrollTop = $(window).scrollTop(),
-        winHeight = $(window).height(),
-        thresold = pageHeight - scrollTop - winHeight;
+    const pageHeight = $('body').height();
+    const scrollTop = $(window).scrollTop();
+    const winHeight = $(window).height();
+    const thresold = pageHeight - scrollTop - winHeight;
+
     if (thresold > -100 && thresold <= 20) {
         console.log('end');
     }
-});
+}
+
+$(window).on('scroll', onScroll);
 ```
 
 ![throttle](/images/posts/throttle-and-debounce/throttle-0.gif)
@@ -34,16 +37,7 @@ $(window).on('scroll', function () {
 这样做的一个缺点就是比较消耗性能，因为当在滚动的时候，浏览器会无时不刻地在计算判断是否滚动到底部的逻辑，而在实际的场景中是不需要这么做的，在实际场景中可能是这样的：在滚动过程中，每隔一段时间在去计算这个判断逻辑。而函数节流所做的工作就是每隔一段时间去执行一次原本需要无时不刻地在执行的函数，所以在滚动事件中引入函数的节流是一个非常好的实践：
 
 ```js
-$(window).on('scroll', throttle(function () {
-    // 判断是否滚动到底部的逻辑
-    let pageHeight = $('body').height(),
-        scrollTop = $(window).scrollTop(),
-        winHeight = $(window).height(),
-        thresold = pageHeight - scrollTop - winHeight;
-    if (thresold > -100 && thresold <= 20) {
-        console.log('end');
-    }
-}));
+$(window).on('scroll', throttle(onScroll));
 ```
 
 ![throttle](/images/posts/throttle-and-debounce/throttle-1.gif)
