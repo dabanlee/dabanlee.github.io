@@ -28,7 +28,7 @@ compiled.view // => `<h1>Hey 🌰, Hello World</h1>`
 实现一个模板引擎实际上就是实现一个编译器，就像这样：
 
 ```js
-const compiled = Compile(template: String|Node, data: Object);
+const compiled = Compile(template: String | Node, data: Object);
 compiled.view // => compiled template
 ```
 
@@ -89,24 +89,21 @@ Compile.compile = {};
  */
 Compile.compile.elementNodes = function (node) {
     const bindSymbol = `:`;
-    let attributes = [].slice.call(node.attributes),
-        attrName = ``,
-        attrValue = ``,
-        directiveName = ``;
+    const attributes = [].slice.call(node.attributes);
 
     attributes.map(attribute => {
-        attrName = attribute.name;
-        attrValue = attribute.value.trim();
+        const attributeName = attribute.name;
+        const attributeValue = attribute.value.trim();
 
-        if (attrName.indexOf(bindSymbol) === 0 && attrValue !== '') {
-            directiveName = attrName.slice(bindSymbol.length);
+        if (attributeName.indexOf(bindSymbol) === 0 && attributeValue !== '') {
+            const directiveName = attributeName.slice(bindSymbol.length);
 
             this.bindDirective({
                 node,
-                expression: attrValue,
+                expression: attributeValue,
                 name: directiveName,
             });
-            node.removeAttribute(attrName);
+            node.removeAttribute(attributeName);
         } else {
             this.bindAttribute(node, attribute);
         }
@@ -133,14 +130,14 @@ export default function Directive(options = {}) {
     Object.assign(this, options);
     Object.assign(this, directives[this.name]);
     this.beforeUpdate && this.beforeUpdate();
-    this.update && this.update(generate(this.expression)(this.compile.options.data));
+    this.update && this.update(generate(this.expression)(this.compile.data));
 }
 ```
 
 `Directive` 做了三件事：
 
 - 注册指令（`Object.assign(this, directives[this.name])`）；
-- 计算指令表达式的实际值（`generate(this.expression)(this.compile.options.data)`）；
+- 计算指令表达式的实际值（`generate(this.expression)(this.compile.data)`）；
 - 把计算出来的实际值更新到 DOM 上面(`this.update()`)。
 
 在介绍指令之前，先看一下它的用法：
@@ -290,11 +287,11 @@ function extractDependencies(expression) {
     const dependencies = [];
 
     expression.replace(dependencyRE, (match, dependency) => {
-        if (
-            dependency !== undefined &&
-            dependencies.indexOf(dependency) === -1 &&
-            globals.indexOf(dependency) === -1
-        ) {
+        const isDefined = dependency => dependency !== undefined;
+        const hasDependency = (dependencies, dependency) => dependencies.includes(dependency);
+        const hasGlobal = (globals, dependency) => globals.includes(dependency);
+
+        if (isDefined(dependency) && !hasDependency(dependencies, dependency) && !hasGlobal(globals, dependency)) {
             dependencies.push(dependency);
         }
     });
@@ -317,9 +314,10 @@ extractDependencies(`typeof String(name) === 'string'  && 'Hello ' + world + '! 
 ```js
 export function generate(expression) {
     const dependencies = extractDependencies(expression);
-    let dependenciesCode = '';
-
-    dependencies.map(dependency => dependenciesCode += `var ${dependency} = this.get("${dependency}"); `);
+    const dependenciesCode = dependencies.reduce((prev, current) => {
+        prev += `var ${current} = data["${current}"]; `
+        return prev;
+    }, '');
 
     return new Function(`data`, `${dependenciesCode}return ${expression};`);
 }
