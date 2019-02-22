@@ -452,7 +452,9 @@ const enhance = compose(withRouter, connect(commentSelector))；
 const EnhancedComponent = enhance(WrappedComponent)；
 ```
 
-因为按照 **约定** 实现的高阶组件其实就是一个纯函数，所以可以通过 `compose` 方法来组合它们。
+因为按照 **约定** 实现的高阶组件其实就是一个纯函数，如果多个函数的参数一样（在这里 `withRouter` 和 `connect(commentSelector)` 所返回的函数的参数都是 `WrappedComponent`），所以就可以通过 `compose` 方法来组合这些函数。
+
+> 使用 compose 组合高阶组件使用，可以显著提高代码的可读性和逻辑的清晰度。
 
 ### 包装显示名字以便于调试
 
@@ -481,19 +483,140 @@ HigherOrderComponent.displayName = wrapDisplayName(BaseComponent, 'HigherOrderCo
 
 不谈场景的技术就是在耍流氓，所以接下来说一下如何在业务场景中使用高阶组件。
 
+### 权限控制
+
+利用高阶组件的 **条件渲染** 特性可以对页面进行权限控制，权限控制一般分为两个维度：**页面级别** 和 **页面元素级别**，这里以页面级别来举一个栗子：
+
+```js
+// HOC.js
+function withAdminAuth(WrappedComponent) {
+    return class extends React.Component {
+        state = {
+            isAdmin: false,
+        }
+        async componentWillMount() {
+            const currentRole = await getCurrentUserRole();
+            this.setState({
+                isAdmin: currentRole === 'Admin',
+            });
+        }
+        render() {
+            if (this.state.isAdmin) {
+                return <WrappedComponent {...this.props} />;
+            } else {
+                return (<div>您没有权限查看该页面，请联系管理员！</div>);
+            }
+        }
+    };
+}
+```
+
+然后是两个页面：
+
+```js
+// pages/page-one.js
+class PageOne extends React.Component {
+    constructor(props) {
+        super(props);
+        // something here...
+    }
+    componentWillMount() {
+        // fetching data
+    }
+    render() {
+        // render page with data
+    }
+}
+export default withAdminAuth(PageOne);
+
+// pages/page-two.js
+class PageTwo extends React.Component {
+    constructor(props) {
+        super(props);
+        // something here...
+    }
+    componentWillMount() {
+        // fetching data
+    }
+    render() {
+        // render page with data
+    }
+}
+export default withAdminAuth(PageTwo);
+```
+
+使用高阶组件对代码进行复用之后，可以非常方便的进行拓展，比如产品经理说，PageThree 页面也要有 Admin 权限才能进入，我们只需要在 `pages/page-three.js` 中把返回的 PageThree 嵌套一层 `withAdminAuth` 高阶组件就行，就像这样 `withAdminAuth(PageThree)`。是不是非常完美！非常高效！！但是。。第二天产品经理又说，PageThree 页面只要 VIP 权限就可以访问了。你三下五除二实现了一个高阶组件 `withVIPAuth`。第三天。。。
+
+其实你还可以更高效的，就是在高阶组件之上再抽象一层，无需实现各种 `withXXXAuth` 高阶组件，因为这些高阶组件本身代码就是高度相似的，所以我们要做的就是实现一个 **返回高阶组件的函数**，把 **变的部分（Admin、VIP）** 抽离出来，保留 **不变的部分**，具体实现如下：
+
+```js
+// HOC.js
+const withAuth = role => WrappedComponent => {
+    return class extends React.Component {
+        state = {
+            permission: false,
+        }
+        async componentWillMount() {
+            const currentRole = await getCurrentUserRole();
+            this.setState({
+                permission: currentRole === role,
+            });
+        }
+        render() {
+            if (this.state.permission) {
+                return <WrappedComponent {...this.props} />;
+            } else {
+                return (<div>您没有权限查看该页面，请联系管理员！</div>);
+            }
+        }
+    };
+}
+```
+
+可以发现经过对高阶组件再进行了一层抽象后，前面的 `withAdminAuth` 可以写成 `withAuth('Admin')` 了，如果此时需要 VIP 权限的话，只需在 `withAuth` 函数中传入 `'VIP'` 就可以了。
+
+### 组件渲染性能追踪
+
+借助父组件子组件生命周期规则捕获子组件的生命周期，可以方便的对某个组件的渲染时间进行记录：
+
+```js
+class Home extends React.Component {
+    render() {
+        return (<h1>Hello World.</h1>);
+    }
+}
+function withTiming(WrappedComponent) {
+    return class extends WrappedComponent {
+        constructor(props) {
+            super(props);
+            this.start = 0;
+            this.end = 0;
+        }
+        componentWillMount() {
+            super.componentWillMount && super.componentWillMount();
+            this.start = Date.now();
+        }
+        componentDidMount() {
+            super.componentDidMount && super.componentDidMount();
+            this.end = Date.now();
+            console.log(`${WrappedComponent.name} 组件渲染时间为 ${this.end - this.start} ms`);
+        }
+        render() {
+            return super.render();
+        }
+    };
+}
+
+export default withTiming(Home);
+```
+
+![withTiming](/images/posts/what-is-hoc/0.jpg)
+
+`withTiming` 是利用 **反向继承** 实现的一个高阶组件，功能是计算被包裹组件（这里是 `Home` 组件）的渲染时间。
+
 ### 页面复用
 
 高阶组件最常用的一个场景之一就是页面复用。
-
-### 页面鉴权
-
-条件渲染
-
-### 性能追踪
-
-借助父组件子组件生命周期规则捕获子组件的生命周期
-
-### 统计上报
 
 ## 装饰者模式？高阶组件？AOP？
 
@@ -527,7 +650,7 @@ Function.prototype.after = function(after = () => {}) {
 
 可以发现其实 `before` 和 `after` 就是一个 **高阶函数**，和高阶组件非常类似。
 
-面向切面编程（**AOP**）主要应用在 **与核心业务无关但又在多个模块使用的功能比如权限控制、日志记录、数据校验、异常处理等领域**。
+面向切面编程（**AOP**）主要应用在 **与核心业务无关但又在多个模块使用的功能比如权限控制、日志记录、数据校验、异常处理、统计上报等等领域**。
 
 类比一下 **AOP** 你应该就知道高阶组件通常是处理哪一类型的问题了吧。
 
@@ -545,6 +668,7 @@ React 中的 **高阶组件** 其实是一个非常简单的概念，但又非�
 
 常用高阶组件库：
 
-- [react-redux](https://github.com/reduxjs/react-redux) 中的 `connect` 方法
+- [react-redux](https://github.com/reduxjs/react-redux)
+    - `connect` 方法
 - [recompose](https://github.com/acdlite/recompose)
 - [relay](https://github.com/facebook/relay)

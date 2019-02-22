@@ -6,7 +6,7 @@
     "version": "3.7.1"
   },
   "scripts": {
-    "start": "hexo server --debug"
+    "start": "hexo serve ."
   },
   "dependencies": {
     "hexo": "^3.7.1",
