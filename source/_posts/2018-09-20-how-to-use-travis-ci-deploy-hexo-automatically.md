@@ -3,6 +3,7 @@ layout:         post
 title:          '如何使用 Travis CI 自动部署 hexo'
 excerpts:       '使用 Travis CI 自动部署 hexo'
 categories:     
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 ## 生成 SSH Key

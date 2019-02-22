@@ -2,6 +2,7 @@
 layout:         post
 title:          '如何用 React 做服务端渲染'
 excerpts:       '服务端渲染的一些优缺点这里就不说了，相信大家都已经非常清楚地知道了，本文意在讲述如何将一个简单的浏览器端渲染的 `React SPA` 循序渐进地升级为支持服务端渲染。'
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 > Photo by [Stage 7 Photography](https://unsplash.com/@stage7photography)

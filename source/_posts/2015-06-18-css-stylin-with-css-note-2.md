@@ -3,6 +3,7 @@ layout: 		post
 title: 			CSS 设计指南 学习笔记 二
 excerpts: 		"本篇文章是对这几天看完 Charles Wyke-Smit 的 《CSS 设计指南》 后的一些学习笔记与心得。"
 categories: 	CSS
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 本篇文章是笔者的 《CSS 设计指南》 学习笔记的第二部分，由于最近都在准备期末考的事，所以都没来得及对 《CSS 设计指南》 进行一些总结，没有看之前第一部分的话也可以从[这里](http://www.cleardesign.me/stylin-with-css-note-1)传送过去。

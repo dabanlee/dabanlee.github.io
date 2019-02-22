@@ -3,6 +3,7 @@ layout: 		post
 title: 			CSS 设计指南 学习笔记 一
 excerpts: 		"本篇文章是对这几天看完 Charles Wyke-Smit 的 《CSS 设计指南》 后的一些学习笔记与心得。"
 categories: 	CSS
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 由于 CSS 作用的对象是 HTML ,所以作者在这章主要先讲了一些基本的 HTML 标签的用法和结构。

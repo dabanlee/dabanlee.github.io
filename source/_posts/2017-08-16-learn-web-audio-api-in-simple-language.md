@@ -3,6 +3,7 @@ layout:         post
 title:          '深入浅出 Web Audio Api'
 excerpts:       ''
 categories:     JavaScript
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 ## 什么是 Web Audio Api

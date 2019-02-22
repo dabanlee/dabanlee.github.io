@@ -2,6 +2,7 @@
 layout:         post
 title:          '什么是极简设计'
 excerpts:       ''
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 上课时间到啦！同学们请坐回自己的位置上去。咦~ 陈独秀同学你还站着干嘛，快坐下。

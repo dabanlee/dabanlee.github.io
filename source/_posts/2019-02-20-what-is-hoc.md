@@ -2,6 +2,7 @@
 layout:         post
 title:          'React 中的高阶组件及其应用场景'
 excerpts:       ''
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 关键词：高阶函数、高阶组件、属性代理、反向继承、装饰器模式、受控组件

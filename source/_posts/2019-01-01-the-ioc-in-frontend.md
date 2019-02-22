@@ -2,6 +2,7 @@
 layout:         post
 title:          '前端中的 IoC 理念'
 excerpts:       'IoC'
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 ## 背景

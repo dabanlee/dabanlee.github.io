@@ -3,6 +3,7 @@ layout: 		post
 title: 			React 中的函数式思想
 excerpts: 		"函数式编程中一个核心概念之一就是纯函数，如果一个函数满足一下几个条件，就可以认为这个函数是纯函数了："
 categories: 	note
+follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
 > 题图：[React Illustration](https://link.zhihu.com/?target=https%3A//dribbble.com/shots/2484828-React-Illustration)
