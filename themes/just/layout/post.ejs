@@ -6,17 +6,24 @@
         <article class="article">
             <header class="article-header">
                 <h1 class="article-title"><%= page.title %></h1>
-                <div class="article-meta">
-                    <span><%= page.author || config.author %></span>
-                    <span>publish at</span>
-                    <time class="article-date" datetime="<%- date(page.date) %>"><%- date(page.date) %></time>
-                </div>
+                <% if (page.publishedAt) { %>
+                    <div class="article-meta">
+                        <span><%= page.author || config.author %></span>
+                        <span>publish at</span>
+                        <time class="article-date" datetime="<%- date(page.date) %>"><%- date(page.date) %></time>
+                    </div>
+                <% } %>
             </header>
             <section class="article-content">
                  <%- page.content %>
             </section>
             <footer class="article-meta">
-                <!--  -->
+                <% if (page.follow) { %>
+                    <div class="follow">
+                        <img src="<%- page.follow[0] %>" alt="前端小专栏">
+                        <p class="description"><%- page.follow[1] %></p>
+                    </div>
+                <% } %>
             </footer>
         </article>
     </div>
