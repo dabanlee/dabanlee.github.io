@@ -514,8 +514,8 @@ function withAdminAuth(WrappedComponent) {
 然后是两个页面：
 
 ```js
-// pages/page-one.js
-class PageOne extends React.Component {
+// pages/page-a.js
+class PageA extends React.Component {
     constructor(props) {
         super(props);
         // something here...
@@ -527,10 +527,10 @@ class PageOne extends React.Component {
         // render page with data
     }
 }
-export default withAdminAuth(PageOne);
+export default withAdminAuth(PageA);
 
-// pages/page-two.js
-class PageTwo extends React.Component {
+// pages/page-b.js
+class PageB extends React.Component {
     constructor(props) {
         super(props);
         // something here...
@@ -542,10 +542,10 @@ class PageTwo extends React.Component {
         // render page with data
     }
 }
-export default withAdminAuth(PageTwo);
+export default withAdminAuth(PageB);
 ```
 
-使用高阶组件对代码进行复用之后，可以非常方便的进行拓展，比如产品经理说，PageThree 页面也要有 Admin 权限才能进入，我们只需要在 `pages/page-three.js` 中把返回的 PageThree 嵌套一层 `withAdminAuth` 高阶组件就行，就像这样 `withAdminAuth(PageThree)`。是不是非常完美！非常高效！！但是。。第二天产品经理又说，PageThree 页面只要 VIP 权限就可以访问了。你三下五除二实现了一个高阶组件 `withVIPAuth`。第三天。。。
+使用高阶组件对代码进行复用之后，可以非常方便的进行拓展，比如产品经理说，PageC 页面也要有 Admin 权限才能进入，我们只需要在 `pages/page-c.js` 中把返回的 PageC 嵌套一层 `withAdminAuth` 高阶组件就行，就像这样 `withAdminAuth(PageC)`。是不是非常完美！非常高效！！但是。。第二天产品经理又说，PageC 页面只要 VIP 权限就可以访问了。你三下五除二实现了一个高阶组件 `withVIPAuth`。第三天。。。
 
 其实你还可以更高效的，就是在高阶组件之上再抽象一层，无需实现各种 `withXXXAuth` 高阶组件，因为这些高阶组件本身代码就是高度相似的，所以我们要做的就是实现一个 **返回高阶组件的函数**，把 **变的部分（Admin、VIP）** 抽离出来，保留 **不变的部分**，具体实现如下：
 
