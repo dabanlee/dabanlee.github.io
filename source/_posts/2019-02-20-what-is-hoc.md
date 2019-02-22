@@ -575,6 +575,8 @@ const withAuth = role => WrappedComponent => {
 
 可以发现经过对高阶组件再进行了一层抽象后，前面的 `withAdminAuth` 可以写成 `withAuth('Admin')` 了，如果此时需要 VIP 权限的话，只需在 `withAuth` 函数中传入 `'VIP'` 就可以了。
 
+有没有发现和 `react-redux` 的 `connect` 方法的使用方式非常像？没错，`connect` 其实也是一个 **返回高阶组件的函数**。
+
 ### 组件渲染性能追踪
 
 借助父组件子组件生命周期规则捕获子组件的生命周期，可以方便的对某个组件的渲染时间进行记录：
@@ -616,7 +618,75 @@ export default withTiming(Home);
 
 ### 页面复用
 
-高阶组件最常用的一个场景之一就是页面复用。
+假设我们有两个页面 `pageA` 和 `pageB` 分别渲染两个分类的电影列表，普通写法可能是这样：
+
+```js
+// pages/page-a.js
+class PageA extends React.Component {
+    state = {
+        movies: [],
+    }
+    // ...
+    async componentWillMount() {
+        const movies = await fetchMoviesByType('science-fiction');
+        this.setState({
+            movies,
+        });
+    }
+    render() {
+        return <MovieList movies={this.state.movies} />
+    }
+}
+export default PageA;
+
+// pages/page-b.js
+class PageB extends React.Component {
+    state = {
+        movies: [],
+    }
+    // ...
+    async componentWillMount() {
+        const movies = await fetchMoviesByType('action');
+        this.setState({
+            movies,
+        });
+    }
+    render() {
+        return <MovieList movies={this.state.movies} />
+    }
+}
+export default PageB;
+```
+
+页面少的时候可能没什么问题，但是假如随着业务的进展，需要上线的越来越多类型的电影，就会写很多的重复代码，所以我们需要重构一下：
+
+```js
+const withFetching = fetching => WrappedComponent => {
+    return class extends React.Component {
+        state = {
+            data: [],
+        }
+        async componentWillMount() {
+            const data = await fetching(type);
+            this.setState({
+                data,
+            });
+        }
+        render() {
+            return <WrappedComponent data={this.state.data} {...this.props} />;
+        }
+    }
+}
+
+// pages/page-a.js
+export default withFetching(fetching('science-fiction'))(MovieList);
+// pages/page-b.js
+export default withFetching(fetching('action'))(MovieList);
+// pages/page-other.js
+export default withFetching(fetching('some-other-type'))(MovieList);
+```
+
+会发现 `withFetching` 其实和前面的 `withAuth` 函数类似，把 **变的部分（fetching(type)）** 抽离到外部传入，从而实现页面的复用。
 
 ## 装饰者模式？高阶组件？AOP？
 
