@@ -18,7 +18,6 @@ follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前
 - 高阶组件的应用场景
 - 装饰者模式？高阶组件？AOP？
 - 总结
-- 拓展阅读
 
 ## 什么是高阶组件
 
@@ -34,7 +33,7 @@ function withGreeting(greeting = () => {}) {
 }
 ```
 
-**高阶组件** 和 **高阶函数** 的定义非常相似：
+**高阶组件** 的定义和 **高阶函数** 非常相似：
 
 > 如果一个函数 **接受一个或多个组件作为参数并且返回一个组件** 就可称之为 **高阶组件**。
 
@@ -46,7 +45,9 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-所以你可能会发现，当高阶组件中返回的组件是 **无状态组件（PureComponent）** 时，该高阶组件其实就是一个 **高阶函数**，因为 `PureComponent` 本身就是一个纯函数。
+所以你可能会发现，当高阶组件中返回的组件是 **无状态组件（Stateless Component）** 时，该高阶组件其实就是一个 **高阶函数**，因为 **无状态组件** 本身就是一个纯函数。
+
+> 无状态组件也称函数式组件。
 
 ## React 中的高阶组件
 
@@ -72,7 +73,7 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-可以发现，属性代理其实就是 **一个函数接受一个 `WrappedComponent` 组件作为参数并且返回一个继承了 `React.Component` 的类，且在该类的 `render()` 方法中返回被传入的 `WrappedComponent` 组件**。
+可以发现，属性代理其实就是 **一个函数接受一个 `WrappedComponent` 组件作为参数传入，并返回一个继承了 `React.Component` 组件的类，且在该类的 `render()` 方法中返回被传入的 `WrappedComponent` 组件**。
 
 那我们可以利用属性代理类型的高阶组件做一些什么呢？
 
@@ -106,7 +107,7 @@ function HigherOrderComponent(WrappedComponent) {
 利用 `props` 和回调函数把 `state` 抽离出来：
 
 ```js
-function HigherOrderComponent(WrappedComponent) {
+function withOnChange(WrappedComponent) {
     return class extends React.Component {
         constructor(props) {
             super(props);
@@ -136,14 +137,14 @@ function HigherOrderComponent(WrappedComponent) {
 
 ```js
 const NameInput = props => (<input name="name" {...props.name} />);
-export default HigherOrderComponent(NameInput);
+export default withOnChange(NameInput);
 ```
 
 这样就将 `input` 转化成受控组件了。
 
 #### 通过 ref 访问到组件实例
 
-有时会有需要访问 DOM element （使用第三方 `DOM` 操作库）的时候就会用到组件的 `ref` 属性。它只能声明在 Class 类型的组件上，而无法声明在函数类型的组件上。
+有时会有需要访问 DOM element （使用第三方 `DOM` 操作库）的时候就会用到组件的 `ref` 属性。它只能声明在 Class 类型的组件上，而无法声明在函数（无状态）类型的组件上。
 
 `ref` 的值可以是字符串（**不推荐使用**）也可以是一个回调函数，如果是回调函数的话，它的执行时机是：
 
@@ -165,14 +166,14 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-**注意：不能在无状态组件（PureComponent）上使用 `ref` 属性，因为无状态组件没有实例。**
+**注意：不能在无状态组件（函数类型组件）上使用 `ref` 属性，因为无状态组件没有实例。**
 
 #### 用其他元素包裹传入的组件 `WrappedComponent`
 
 给 `WrappedComponent` 组件包一层背景色为 `#fafafa` 的 `div` 元素：
 
 ```js
-function HigherOrderComponent(WrappedComponent) {
+function withBackgroundColor(WrappedComponent) {
     return class extends React.Component {
         render() {
             return (
@@ -199,7 +200,7 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-反向继承其实就是 **一个函数接受一个 `WrappedComponent` 组件作为参数并且返回一个继承了该传入 `WrappedComponent` 组件的类，且在该类的 `render()` 方法中返回 `super.render()` 方法**。
+反向继承其实就是 **一个函数接受一个 `WrappedComponent` 组件作为参数传入，并返回一个继承了该传入 `WrappedComponent` 组件的类，且在该类的 `render()` 方法中返回 `super.render()` 方法**。
 
 会发现其属性代理和实反向继承的实现有些类似的地方，比如属性代理中继承的是 `React.Component` 和 `render()` 中返回的是 `WrappedComponent`，反向继承中继承的是传入的组件 `WrappedComponent` 和 `render()` 中返回的是 `super.render()`。
 
@@ -213,7 +214,7 @@ function HigherOrderComponent(WrappedComponent) {
 高阶组件中可以读取、编辑和删除 `WrappedComponent` 组件实例中的 `state`。甚至可以增加更多的 `state` 项，但是 **非常不建议这么做** 因为这可能会导致 `state` 难以维护及管理。
 
 ```js
-function HigherOrderComponent(WrappedComponent) {
+function withLogging(WrappedComponent) {
     return class extends WrappedComponent {
         render() {
             return (
@@ -247,7 +248,7 @@ function HigherOrderComponent(WrappedComponent) {
 通过 `props.isLoading` 这个条件来判断渲染哪个组件。
 
 ```js
-function HigherOrderComponent(WrappedComponent) {
+function withLoading(WrappedComponent) {
     return class extends WrappedComponent {
         render() {
             if(this.props.isLoading) {
@@ -314,10 +315,11 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-但是这么做的一个缺点就是必须知道要拷贝的方法是什么，不过 React 社区实现了一个库 `hoist-non-react-statics` 来自动处理，它会**自动拷贝所有非 React 的静态方法**：
+但是这么做的一个缺点就是必须知道要拷贝的方法是什么，不过 React 社区实现了一个库 `hoist-non-react-statics` 来自动处理，它会 **自动拷贝所有非 React 的静态方法**：
 
 ```js
 import hoistNonReactStatic from 'hoist-non-react-statics';
+
 function HigherOrderComponent(WrappedComponent) {
     class Enhance extends React.Component {}
     hoistNonReactStatic(Enhance, WrappedComponent);
@@ -331,7 +333,7 @@ function HigherOrderComponent(WrappedComponent) {
 
 如果你向一个由高阶组件创建的组件的元素添加 `ref` 引用，那么 `ref` 指向的是最外层容器组件实例的，而不是被包裹的 `WrappedComponent` 组件。
 
-那如果有一定要传递 `ref` 的需求呢，别急，React 为我们提供了一个名为 `React.forwardRef` 的 API 来解决这一问题（在 React 16.3 版本中）：
+那如果有一定要传递 `ref` 的需求呢，别急，React 为我们提供了一个名为 `React.forwardRef` 的 API 来解决这一问题（在 React 16.3 版本中被添加）：
 
 ```js
 function withLogging(WrappedComponent) {
@@ -362,17 +364,17 @@ const EnhancedComponent = withLogging(SomeComponent);
 
 React 组件有两种形式，分别是 class 类型和 function 类型（无状态组件）。
 
-我们知道反向继承的渲染劫持可以控制 `WrappedComponent` 的渲染过程，也就是说这个过程中我们可以对元素树、`state`、`props` 或 `render()` 的结果做各种操作。
+我们知道反向继承的渲染劫持可以控制 `WrappedComponent` 的渲染过程，也就是说这个过程中我们可以对 `elements tree`、`state`、`props` 或 `render()` 的结果做各种操作。
 
-但是如果渲染元素树中包含了 function 类型的组件的话，这时候就不能操作组件的子组件了。
+但是如果渲染 `elements tree` 中包含了 function 类型的组件的话，这时候就不能操作组件的子组件了。
 
 ## 高阶组件的约定
 
 高阶组件带给我们极大方便的同时，我们也要遵循一些 **约定**：
 
 - `props` 保持一致
-- 你不能在函数式组件上使用 `ref` 属性，因为它没有实例
-- 不要改变原始组件 `WrappedComponent`
+- 你不能在函数式（无状态）组件上使用 `ref` 属性，因为它没有实例
+- 不要以任何方式改变原始组件 `WrappedComponent`
 - 透传不相关 `props` 属性给被包裹的组件 `WrappedComponent`
 - 不要再 `render()` 方法中使用高阶组件
 - 使用 `compose` 组合高阶组件
@@ -397,7 +399,7 @@ function withLogging(WrappedComponent) {
 const EnhancedComponent = withLogging(SomeComponent);
 ```
 
-会发现在高阶组件的内部对 `WrappedComponent` 进行了修改，一旦对原组件进行了修改，那么就失去了组件复用的意义，所以请通过 **纯函数** 返回新的组件：
+会发现在高阶组件的内部对 `WrappedComponent` 进行了修改，一旦对原组件进行了修改，那么就失去了组件复用的意义，所以请通过 **纯函数（相同的输入总有相同的输出）** 返回新的组件：
 
 ```js
 function withLogging(WrappedComponent) {
@@ -453,7 +455,7 @@ const enhance = compose(withRouter, connect(commentSelector))；
 const EnhancedComponent = enhance(WrappedComponent)；
 ```
 
-因为按照 **约定** 实现的高阶组件其实就是一个纯函数，如果多个函数的参数一样（在这里 `withRouter` 和 `connect(commentSelector)` 所返回的函数的参数都是 `WrappedComponent`），所以就可以通过 `compose` 方法来组合这些函数。
+因为按照 **约定** 实现的高阶组件其实就是一个纯函数，如果多个函数的参数一样（在这里 `withRouter` 函数和 `connect(commentSelector)` 所返回的函数所需的参数都是 `WrappedComponent`），所以就可以通过 `compose` 方法来组合这些函数。
 
 > 使用 compose 组合高阶组件使用，可以显著提高代码的可读性和逻辑的清晰度。
 
@@ -668,7 +670,7 @@ const withFetching = fetching => WrappedComponent => {
             data: [],
         }
         async componentWillMount() {
-            const data = await fetching(type);
+            const data = await fetching();
             this.setState({
                 data,
             });
@@ -734,7 +736,7 @@ React 中的 **高阶组件** 其实是一个非常简单的概念，但又非�
 - 高阶组件 **不是组件**，**是** 一个把某个组件转换成另一个组件的 **函数**
 - 高阶组件的主要作用是 **代码复用**
 - 高阶组件是 **装饰器模式在 React 中的实现**
-
+<!-- 
 ## 拓展阅读
 
 常用高阶组件库：
@@ -742,4 +744,4 @@ React 中的 **高阶组件** 其实是一个非常简单的概念，但又非�
 - [react-redux](https://github.com/reduxjs/react-redux)
     - `connect` 方法
 - [recompose](https://github.com/acdlite/recompose)
-- [relay](https://github.com/facebook/relay)
+- [relay](https://github.com/facebook/relay) -->
