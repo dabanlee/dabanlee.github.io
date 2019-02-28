@@ -202,7 +202,7 @@ function HigherOrderComponent(WrappedComponent) {
 
 反向继承其实就是 **一个函数接受一个 `WrappedComponent` 组件作为参数传入，并返回一个继承了该传入 `WrappedComponent` 组件的类，且在该类的 `render()` 方法中返回 `super.render()` 方法**。
 
-会发现其属性代理和实反向继承的实现有些类似的地方，比如属性代理中继承的是 `React.Component` 和 `render()` 中返回的是 `WrappedComponent`，反向继承中继承的是传入的组件 `WrappedComponent` 和 `render()` 中返回的是 `super.render()`。
+会发现其属性代理和反向继承的实现有些类似的地方，都是返回一个继承了某个父类的子类，只不过属性代理中继承的是 `React.Component`，反向继承中继承的是传入的组件 `WrappedComponent`。
 
 反向继承可以用来做什么：
 
