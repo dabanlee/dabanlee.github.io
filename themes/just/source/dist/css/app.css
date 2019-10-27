@@ -8,6 +8,9 @@ a {
   a:active {
     text-decoration: none; }
 
+a[title="站长统计"] {
+    display: none;
+}
 code {
   color: #00cc80;
   background: #fafafa !important;

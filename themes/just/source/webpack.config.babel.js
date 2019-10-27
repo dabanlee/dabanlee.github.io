@@ -1,12 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractCSS = require('extract-text-webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV === 'development' ? true : false;
 
-let configure = {};
-
-configure = {
+const configure = {
+    mode: process.env.NODE_ENV,
     entry: {
         'app': [
             './js/app.js',
@@ -18,13 +17,13 @@ configure = {
         filename: 'js/[name].js?[hash:8]', // output file name
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.(js|es6)$/,
             use: ['babel-loader'],
             exclude: /node_modules/,
         }, {
             test: /\.(scss|css)$/,
-            use: ExtractTextPlugin.extract({
+            use: ExtractCSS.extract({
                 fallback: `style-loader`,
                 use: [
                     'css-loader',
@@ -51,10 +50,8 @@ configure = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new ExtractTextPlugin({
+        new ExtractCSS({
             filename: 'css/[name].css',
-            disable: false,
-            allChunks: true,
         }),
     ],
 };
