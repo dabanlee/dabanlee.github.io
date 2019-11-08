@@ -1,19 +1,35 @@
 ---
 layout:         post
-title:          'Wordpress + Docker Compose'
+title:          'Nginx Configuration'
 excerpts:       ''
-# follow:         ['/images/follow.png', '更多干货请关注公众号 <span>前端小专栏</span>']
 ---
 
-Nginx:
+## NodeJS + PM2
+
+`nginx.conf`:
+
+```sh
+upstream node {
+    server 127.0.0.1:3000;
+}
+server {
+    listen       80;
+    server_name example.com;
+
+    location / {
+        proxy_pass    http://node;
+    }
+}
+```
+
+## Wordpress + Docker Compose
+
+`nginx.conf`:
 
 ```sh
 server {
     listen       80;
-    server_name uikitstore.com;
-
-    access_log /www/log/chaoxuan.co.access.log;
-    error_log /www/log/chaoxuan.co.error.log;
+    server_name example.com;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
