@@ -3,7 +3,7 @@
 
 <div class="page-content">
     <div class="container">
-        <% site.data.idea.map(function(post) { %>
+        <% site.posts.filter(function(v) {return v.type === 'IDEA'}).map(function(post) { %>
         <article class="article">
             <header class="article-header">
                 <h2 class="article-title">
