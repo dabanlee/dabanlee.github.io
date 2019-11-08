@@ -3,7 +3,7 @@
 
 <div class="page-content">
     <div class="container">
-        <% page.posts.each(function(post) { %>
+        <% page.posts.filter(function(v) {return !v.private}).map(function(post) { %>
         <article class="article">
             <header class="article-header">
                 <h2 class="article-title">

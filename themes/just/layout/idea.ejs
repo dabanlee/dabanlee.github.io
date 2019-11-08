@@ -1,0 +1,24 @@
+<%- partial('partial/head') %>
+<%- partial('partial/header') %>
+
+<div class="page-content">
+    <div class="container">
+        <% site.data.idea.map(function(post) { %>
+        <article class="article">
+            <header class="article-header">
+                <h2 class="article-title">
+                    <a href="/<%= post.path %>"><%= post.title %></a>
+                </h2>
+            </header>
+            <section class="article-excerpt">
+                <% if (post.excerpts != '') { %>
+                <p><%= post.excerpts %> ...</p>
+                <% } %>
+            </section>
+        </article>
+        <% }); %>
+    </div>
+</div>
+
+<%- partial('partial/footer') %>
+<%- partial('partial/foot') %>
