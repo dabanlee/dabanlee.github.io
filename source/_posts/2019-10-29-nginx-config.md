@@ -2,6 +2,7 @@
 layout:         post
 title:          'Nginx Configuration'
 excerpts:       ''
+private:        true
 ---
 
 ## NodeJS + PM2
