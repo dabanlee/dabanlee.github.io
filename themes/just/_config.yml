@@ -1,9 +1,8 @@
 menus:
     HOME: /
     IDEA: /idea
-    # ARCHIVE: /archives/
+    ABOUT: /about/
     GITHUB: https://github.com/justclear
-    # ABOUT: /about/
 
 favicon: /favicon.png
 logo: /images/logo.jpg

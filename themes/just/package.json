@@ -1,45 +1,43 @@
 {
-  "name": "just-me",
+  "name": "justx",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "webpack project template",
+  "main": "dist/justx.js",
+  "types": "src/types/index.d.js",
   "scripts": {
-    "start": "NODE_ENV=development http-server",
-    "dev": "cd source && NODE_ENV=development webpack",
-    "watch": "cd source && NODE_ENV=development webpack -w",
-    "prod": "cd source && NODE_ENV=production webpack -p",
-    "lint": "eslint src"
+    "start": "NODE_ENV=development webpack-dev-server --mode=development",
+    "dev": "NODE_ENV=development webpack -w --config webpack.config.js --mode=development",
+    "build": "NODE_ENV=producttion webpack --config webpack.config.js --mode=producttion"
   },
-  "repository": {
-    "url": "https://github.com/JustClear/just.git",
-    "type": "git"
-  },
-  "author": "JustClear <576839360@qq.com>",
+  "author": "大板栗 <laibinzhuan@gmail.com>",
   "license": "MIT",
-  "description": "hexo theme.",
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "autoprefixer": "^9.6.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^10.0.2",
-    "babel-loader": "^8.0.6",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "@babel/env": "^6.24.1",
-    "css-loader": "^3.0.0",
-    "eslint": "^6.0.1",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "file-loader": "^4.0.0",
-    "node-sass": "^4.12.0",
+    "autoprefixer": "^9.7.1",
+    "copy-webpack-plugin": "^5.0.5",
+    "css-loader": "^3.2.0",
+    "cssnano": "^4.1.10",
+    "file-loader": "^4.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "postcss-background-image-auto-size": "^1.0.2",
     "postcss-loader": "^3.0.0",
+    "postcss-px-to-viewport": "^1.1.1",
+    "postcss-sassy-mixins": "^2.1.0",
+    "postcss-scss": "^2.0.0",
     "precss": "^4.0.0",
-    "sass-loader": "^7.1.0",
-    "sourcemap": "^0.1.0",
-    "style-loader": "^0.23.1",
-    "url-loader": "^2.0.1",
-    "webpack": "^4.39.2",
-    "webpack-cli": "^3.3.7",
-    "webpack-dev-server": "^3.7.2"
+    "style-loader": "^1.0.0",
+    "sudo": "^1.0.3",
+    "ts-loader": "^6.2.1",
+    "tslib": "^1.10.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2",
+    "url-loader": "^2.2.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   },
+  "moduleName": "justx",
+  "module": "dist/justx.es.js",
   "dependencies": {
-    "medium-zoom": "^0.1.7"
+    "medium-zoom": "^1.0.4"
   }
 }
