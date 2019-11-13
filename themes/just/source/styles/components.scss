@@ -1,3 +1,10 @@
+.Header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
 .Nav {
     position: relative;
     height: $nav-height;
@@ -13,6 +20,8 @@
         width: $logo-size;
         height: $logo-size;
         background: #fafcfb;
+        border-radius: calc($logo-size / 2);
+        overflow: hidden;
 
         img {
             width: 100%;
@@ -71,5 +80,36 @@
         color: #333;
         font-weight: bold;
         letter-spacing: 6px;
+    }
+}
+
+.Avatar {
+    $size: 200px;
+    width: $size;
+    height: $size;
+    border-radius: calc($size / 2);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: transform .3s;
+    margin: 30px 0;
+    
+    &:hover {
+        box-shadow: 0px 0px 30px rgba(230, 230, 230, 1);
+        transition: transform .3s;
+        transform: scale(1.05);
+    }
+}
+
+.About {
+    .bio {
+        text-align: center;
+    }
+
+    .avatar-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }

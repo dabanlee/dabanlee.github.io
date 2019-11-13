@@ -142,4 +142,4 @@ module.exports = __webpack_require__.p + "images/logo.jpg?63be2a37";
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.js.map?924cd3bd
+//# sourceMappingURL=app.js.map?4ee228fb

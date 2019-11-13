@@ -1,6 +1,7 @@
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    padding-top: 80px;
 }
 
 a {
@@ -21,17 +22,79 @@ code {
     margin: 1rem 0;
 }
 
-.container {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    box-sizing: border-box;
-    padding: 0 2rem;
+h1 {
+    font-size: 40px;
 }
 
-.text-center {
-    text-align: center;
+h2 {
+    font-size: 24px;
 }
+
+h3 {
+    font-size: 22px;
+}
+
+h4 {
+    font-size: 20px;
+}
+
+h5,
+h6 {
+    font-size: 18px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 3rem 0 1rem;
+}
+
+p,
+li {
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+li {
+    margin: .5rem 0;
+}
+
+a {
+    color: #000;
+    font-weight: bold
+}
+
+a:hover {
+        text-decoration: underline;
+    }
+
+img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+
+ul,
+ol {
+    line-height: 2;
+}
+
+blockquote {
+    position: relative;
+    background: #fafafa;
+    margin: 0;
+    padding: 10px 0;
+    padding-left: 30px;
+    border-left: 3px solid #999;
+    box-sizing: border-box;
+}
+
+blockquote p {
+        margin: 0;
+    }
 .follow {
     margin-top: 20px;
 }
@@ -45,39 +108,16 @@ code {
 a[title="站长统计"] {
     display: none;
 }
-.avatar-wrap {
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-            justify-content: center;
+.container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0 2rem;
 }
-.Avatar {
-    width: 200px;
-    height: 200px;
-    border-radius: calc(200px / 2);
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-    cursor: pointer;
-    -webkit-transition: -webkit-transform .3s;
-    transition: -webkit-transform .3s;
-    transition: transform .3s;
-    transition: transform .3s, -webkit-transform .3s
+.text-center {
+    text-align: center;
 }
-.Avatar:hover {
-        box-shadow: 0px 0px 30px rgba(230, 230, 230, 1);
-        -webkit-transition: -webkit-transform .3s;
-        transition: -webkit-transform .3s;
-        transition: transform .3s;
-        transition: transform .3s, -webkit-transform .3s;
-        -webkit-transform: scale(1.05);
-                transform: scale(1.05);
-    }
-.About .bio {
-        text-align: center;
-    }
 body[data-page="home"] h2 {
         margin: 0;
         margin-bottom: 20px;
@@ -112,67 +152,14 @@ body[data-page="home"] .article:after {
 }
 .page-content {
     color: #333;
+    overflow: hidden;
 }
-.page-content h1 {
-        font-size: 40px;
-    }
-.page-content h2 {
-        font-size: 24px;
-    }
-.page-content h3 {
-        font-size: 22px;
-    }
-.page-content h4 {
-        font-size: 20px;
-    }
-.page-content h5,
-    .page-content h6 {
-        font-size: 18px;
-    }
-.page-content h1,
-    .page-content h2,
-    .page-content h3,
-    .page-content h4,
-    .page-content h5,
-    .page-content h6 {
-        margin: 3rem 0 1rem;
-    }
-.page-content p,
-    .page-content li {
-        margin: 1rem 0;
-        line-height: 1.6;
-    }
-.page-content li {
-        margin: .5rem 0;
-    }
-.page-content a {
-        color: #000;
-        font-weight: bold
-    }
-.page-content a:hover {
-            text-decoration: underline;
-        }
-.page-content img {
-        max-width: 100%;
-        display: block;
-        margin: 0 auto;
-    }
-.page-content ul,
-    .page-content ol {
-        line-height: 2;
-    }
-.page-content blockquote {
-        position: relative;
-        background: #fafafa;
-        margin: 0;
-        padding: 10px 0;
-        padding-left: 30px;
-        border-left: 3px solid #999;
-        box-sizing: border-box;
-    }
-.page-content blockquote p {
-            margin: 0;
-        }
+.Header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
 .Nav {
     position: relative;
     height: 80px;
@@ -190,6 +177,8 @@ body[data-page="home"] .article:after {
         width: 60px;
         height: 60px;
         background: #fafcfb;
+        border-radius: calc(60px / 2);
+        overflow: hidden;
     }
 .Nav .Logo img {
             width: 100%;
@@ -239,6 +228,40 @@ body[data-page="home"] .article:after {
         font-weight: bold;
         letter-spacing: 6px;
     }
+.Avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: calc(200px / 2);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    -webkit-transition: -webkit-transform .3s;
+    transition: -webkit-transform .3s;
+    transition: transform .3s;
+    transition: transform .3s, -webkit-transform .3s;
+    margin: 30px 0
+}
+.Avatar:hover {
+        box-shadow: 0px 0px 30px rgba(230, 230, 230, 1);
+        -webkit-transition: -webkit-transform .3s;
+        transition: -webkit-transform .3s;
+        transition: transform .3s;
+        transition: transform .3s, -webkit-transform .3s;
+        -webkit-transform: scale(1.05);
+                transform: scale(1.05);
+    }
+.About .bio {
+        text-align: center;
+    }
+.About .avatar-wrap {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-align: center;
+                align-items: center;
+        -webkit-box-pack: center;
+                justify-content: center;
+    }
 
 
-/*# sourceMappingURL=app.css.map?924cd3bd*/
+/*# sourceMappingURL=app.css.map?4ee228fb*/
