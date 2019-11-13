@@ -11,7 +11,7 @@ const configure = {
         filename: `js/[name].js?[hash:8]`,
     },
     resolve: {
-        extensions: ['.ts', '.js', '.json'],
+        extensions: ['.ts', '.js', '.json', '.scss'],
         alias: {
             '@src': path.resolve(__dirname, `src`),
             '@app': path.resolve(__dirname, `src/app`),

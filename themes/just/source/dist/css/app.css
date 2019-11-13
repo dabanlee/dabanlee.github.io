@@ -32,64 +32,6 @@ code {
 .text-center {
     text-align: center;
 }
-.nav {
-    position: relative;
-    height: 80px;
-}
-.nav .container {
-        display: -webkit-box;
-        display: flex;
-        -webkit-box-align: center;
-                align-items: center;
-        -webkit-box-pack: justify;
-                justify-content: space-between;
-    }
-.nav .logo {
-        float: left;
-        width: 60px;
-        height: 60px;
-        background: #fafcfb;
-    }
-.nav .logo img {
-            width: 100%;
-            height: 100%;
-        }
-.nav .menu {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        float: right;
-        height: 80px;
-        line-height: 80px;
-    }
-.nav .menu li {
-            display: inline-block;
-            margin-left: 20px;
-        }
-.nav .menu a {
-            font-weight: bold;
-        }
-.pagination {
-    margin-top: 20px;
-    padding: 10px 0;
-}
-.pagination .page-prev,
-    .pagination .page-next {
-        display: block;
-        width: 100px;
-        height: 40px;
-        line-height: 40px;
-        border-radius: 10px;
-        font-size: 24px;
-        text-align: center;
-        box-shadow: 0 0 2px #aaa;
-    }
-.pagination .page-prev {
-        float: left;
-    }
-.pagination .page-next {
-        float: right;
-    }
 .follow {
     margin-top: 20px;
 }
@@ -132,6 +74,9 @@ a[title="站长统计"] {
         transition: transform .3s, -webkit-transform .3s;
         -webkit-transform: scale(1.05);
                 transform: scale(1.05);
+    }
+.About .bio {
+        text-align: center;
     }
 body[data-page="home"] h2 {
         margin: 0;
@@ -228,14 +173,72 @@ body[data-page="home"] .article:after {
 .page-content blockquote p {
             margin: 0;
         }
-.footer {
+.Nav {
+    position: relative;
+    height: 80px;
+}
+.Nav .container {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-align: center;
+                align-items: center;
+        -webkit-box-pack: justify;
+                justify-content: space-between;
+    }
+.Nav .Logo {
+        float: left;
+        width: 60px;
+        height: 60px;
+        background: #fafcfb;
+    }
+.Nav .Logo img {
+            width: 100%;
+            height: 100%;
+        }
+.Nav .menu {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        float: right;
+        height: 80px;
+        line-height: 80px;
+    }
+.Nav .menu li {
+            display: inline-block;
+            margin-left: 20px;
+        }
+.Nav .menu a {
+            font-weight: bold;
+        }
+.Pagination {
+    margin-top: 20px;
+    padding: 10px 0;
+}
+.Pagination .page-prev,
+    .Pagination .page-next {
+        display: block;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 10px;
+        font-size: 24px;
+        text-align: center;
+        box-shadow: 0 0 2px #aaa;
+    }
+.Pagination .page-prev {
+        float: left;
+    }
+.Pagination .page-next {
+        float: right;
+    }
+.Footer {
     padding: 100px 0;
 }
-.footer .copyright {
+.Footer .copyright {
         color: #333;
         font-weight: bold;
         letter-spacing: 6px;
     }
 
 
-/*# sourceMappingURL=app.css.map?6ccbf44c*/
+/*# sourceMappingURL=app.css.map?924cd3bd*/

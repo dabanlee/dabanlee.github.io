@@ -1,4 +1,4 @@
-import './styles/style.scss'
+import './styles/app'
 import './images/logo.jpg'
 import mediumZoom from 'medium-zoom'
 

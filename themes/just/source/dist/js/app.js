@@ -110,7 +110,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(/*! ./styles/style.scss */ "./source/styles/style.scss");
+__webpack_require__(/*! ./styles/app */ "./source/styles/app.scss");
 __webpack_require__(/*! ./images/logo.jpg */ "./source/images/logo.jpg");
 var medium_zoom_1 = __webpack_require__(/*! medium-zoom */ "./node_modules/medium-zoom/dist/medium-zoom.esm.js");
 hljs.initHighlightingOnLoad();
@@ -130,10 +130,10 @@ module.exports = __webpack_require__.p + "images/logo.jpg?63be2a37";
 
 /***/ }),
 
-/***/ "./source/styles/style.scss":
-/*!**********************************!*\
-  !*** ./source/styles/style.scss ***!
-  \**********************************/
+/***/ "./source/styles/app.scss":
+/*!********************************!*\
+  !*** ./source/styles/app.scss ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -142,4 +142,4 @@ module.exports = __webpack_require__.p + "images/logo.jpg?63be2a37";
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.js.map?6ccbf44c
+//# sourceMappingURL=app.js.map?924cd3bd

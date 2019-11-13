@@ -2,7 +2,6 @@
   "name": "justx",
   "version": "1.0.0",
   "description": "webpack project template",
-  "main": "dist/justx.js",
   "types": "src/types/index.d.js",
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server --mode=development",
@@ -20,12 +19,10 @@
     "mini-css-extract-plugin": "^0.8.0",
     "postcss-background-image-auto-size": "^1.0.2",
     "postcss-loader": "^3.0.0",
+    "postcss-nested": "^4.2.1",
     "postcss-px-to-viewport": "^1.1.1",
     "postcss-sassy-mixins": "^2.1.0",
-    "postcss-scss": "^2.0.0",
-    "precss": "^4.0.0",
     "style-loader": "^1.0.0",
-    "sudo": "^1.0.3",
     "ts-loader": "^6.2.1",
     "tslib": "^1.10.0",
     "tslint": "^5.20.1",
@@ -35,8 +32,6 @@
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
   },
-  "moduleName": "justx",
-  "module": "dist/justx.es.js",
   "dependencies": {
     "medium-zoom": "^1.0.4"
   }

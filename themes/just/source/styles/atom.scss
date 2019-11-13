@@ -1,0 +1,46 @@
+
+.follow {
+    margin-top: 20px;
+    .description {
+        text-align: center;
+        color: #333;
+        span {
+            font-weight: bold;
+        }
+    }
+}
+
+a[title="站长统计"] {
+    display: none;
+}
+
+
+.avatar-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Avatar {
+    $size: 200px;
+    width: $size;
+    height: $size;
+    border-radius: calc($size / 2);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: transform .3s;
+    
+    &:hover {
+        box-shadow: 0px 0px 30px rgba(230, 230, 230, 1);
+        transition: transform .3s;
+        transform: scale(1.05);
+    }
+}
+
+.About {
+    .bio {
+        text-align: center;
+    }
+}
