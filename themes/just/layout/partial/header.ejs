@@ -11,6 +11,12 @@
                 <li><a href="<%= theme.menus[name] %>"><%= name %></a></li>
                 <% }; %>
             </ul>
+            <div class="icon-menu js-icon-menu"></div>
         </div>
     </nav>
 </header>
+<ul class="menu-mobile js-menu-mobile">
+    <% for (var name in theme.menus) { %>
+    <li><a href="<%= theme.menus[name] %>"><%= name %></a></li>
+    <% }; %>
+</ul>

@@ -9,6 +9,7 @@ favicon: /favicon.png
 logo: /images/logo.jpg
 title: Just
 description: ''
-url: http://justclear.github.io/
+url: /
+urls: http://justclear.github.io/
 startyear: 2015
 thisyear: 2019
