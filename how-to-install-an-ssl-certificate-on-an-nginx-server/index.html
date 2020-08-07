@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            如何在 NGINX 服务器中安装 SSL 证书 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">如何在 NGINX 服务器中安装 SSL 证书</h1>
+                
+            </header>
+            <section class="article-content">
+                 <p>2018 年 2 月 9 日 Google 宣布将于 7 月起，<code>Chrome</code> 浏览器的地址栏将把所有 <code>HTTP</code> 标示为不安全网站。</p>
+<p><code>HTTPS</code> 是 <code>HTTP</code> 协议的升级版本，更安全、更可靠。用户和网站之间的安全连接协议被视为减少用户风险的必要措施，否则用户可能遭受窃听、中间人攻击或数据篡改。</p>
+<p>但是如果要升级到 <code>HTTPS</code> 的话，需要在服务器上安装 <code>SSL</code> 证书，常见的 <code>SSL</code> 证书由国际顶级 <code>CA</code> 机构授权颁发，比如 <a href="https://www.geotrust.com/" target="_blank" rel="noopener">GeoTrust</a>、 <a href="https://www.symantec.com/" target="_blank" rel="noopener">Symantec</a> 和 <a href="https://www.globalsign.com" target="_blank" rel="noopener">GlobalSign</a> 等等。</p>
+<p>这些权威机构颁发的证书虽然安全稳定有保障，但却都是收费的，而且价格不菲，对于小微企业或者个人开发者来说，难以承受，所以今天介绍一个免费的解决方案 —— <a href="https://letsencrypt.org/" target="_blank" rel="noopener">Let’s Encrypt</a>。</p>
+<p><strong>Let’s Encrypt</strong> 是由 Mozilla、Cisco、Akamai、IdenTrust 等组织人员发起，目的也是为了推进网站从 <code>HTTP</code> 向 <code>HTTPS</code> 过度的进程，所以从安全可靠性上来说是没什么问题。</p>
+<p>总的来说 <strong>Let’s Encrypt</strong> 是一个免费、简单、自动化、安全可靠的 <code>HTTPS</code> 解决方案。接下来将介绍如何在服务器安装 <code>SSL</code> 证书。</p>
+<h2 id="安装-SSL-证书"><a href="#安装-SSL-证书" class="headerlink" title="安装 SSL 证书"></a>安装 SSL 证书</h2><p>这里将使用 <strong>Let’s Encrypt</strong> 的客户端 <a href="https://certbot.eff.org/" target="_blank" rel="noopener">Certbot</a> 来自动化获取、部署和更新安全证书。</p>
+<p><img src="/images/posts/how-to-install-an-ssl-certificate-on-an-nginx-server/certbot.jpg" alt="Certbot"></p>
+<p>这里以 <code>NGINX</code> 和 <code>CentOS</code> 为例（选择符合自己的选项），登录服务器获取 <strong>Certbot</strong>：</p>
+<pre><code class="sh">$ wget https://dl.eff.org/certbot-auto
+$ chmod a+x certbot-auto</code></pre>
+<p>至此 <strong>Certbot</strong> 已经安装好了，<strong>Certbot</strong> 有一个 <code>NGINX</code> 插件，可以自动把 <code>SSL</code> 证书信息自动配置到 <code>NGINX</code> 的配置中去：</p>
+<pre><code class="sh">$ sudo ./path/to/certbot-auto --nginx</code></pre>
+<p>当执行这个命令的时候，<strong>Certbot</strong> 会先让你输入一些信息比如邮箱、同意协议、访问 <code>HTTP</code> 时是否跳转 <code>HTTPS</code> 等等，同意之后就会自动检测 <code>nginx.conf</code> 下面的配置，并把所有站点配置都列出来并让你选择哪个域名开启 <code>HTTPS</code>（输入列表编号，多个用空格分开）：</p>
+<p><img src="/images/posts/how-to-install-an-ssl-certificate-on-an-nginx-server/configure.jpg" alt="Configure"></p>
+<p>然后到我们的 <code>NGINX</code> 配置中查看配置是否更新：</p>
+<p><img src="/images/posts/how-to-install-an-ssl-certificate-on-an-nginx-server/nginx-conf.jpg" alt="Configure"></p>
+<p>会发现底部多了一些标有 <code># managed by Certbot</code> 的配置信息，表明 SSL 证书已经配置好了，重启一下 <code>NGINX</code> 就可以访问 <code>HTTPS</code> 协议的域名了，基本所有内容 <strong>Certbot</strong> 都自动完成了，非常简单，此时已经可以打开 <code>HTTPS</code> 协议的域名了：</p>
+<p><img src="/images/posts/how-to-install-an-ssl-certificate-on-an-nginx-server/https.jpg" alt="Configure"></p>
+<p>不过 <strong>Let’s Encrypt</strong> 默认有效期为 90 天，所以需要长期使用的话，就要及时更新证书，不过不用担心，<strong>Certbot</strong> 提供了非常简单的命令 <code>renew</code> 来更新证书，并且还会提示你证书几月几号会过期（这里是 <code>2019-03-30</code>）：</p>
+<pre><code class="sh">$ sudo /path/to/certbot-auto renew</code></pre>
+<p><img src="/images/posts/how-to-install-an-ssl-certificate-on-an-nginx-server/renew.jpg" alt="Configure"></p>
+<p>既然是长期使用，所以当然是发布一个定时任务，<code>vim /etc/crontab</code>：</p>
+<p><img src="/images/posts/how-to-install-an-ssl-certificate-on-an-nginx-server/crontab.jpg" alt="Configure"></p>
+<p>上面任务表示每个月的 1 号会 <code>renew</code> 一次，<code>renew</code> 后的 5 分钟会重启一次 <code>NGINX</code> 服务。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，就实现了 <code>HTTP</code> 到 <code>HTTPS</code> 的升级，且自动更新 <code>SSL</code> 证书以免过期。 Emmmmm… 没了</p>
+
+            </section>
+            <footer class="article-meta">
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

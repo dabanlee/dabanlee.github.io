@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            前端中的 IoC 理念 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">前端中的 IoC 理念</h1>
+                
+            </header>
+            <section class="article-content">
+                 <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>前端应用在不断壮大的过程中，内部模块间的依赖可能也会随之越来越复杂，模块间的 <strong>低复用性</strong> 导致应用 <strong>难以维护</strong>，不过我们可以借助计算机领域的一些优秀的编程理念来一定程度上解决这些问题，接下来要讲述的 <code>IoC</code> 就是其中之一。</p>
+<h2 id="什么是-IoC"><a href="#什么是-IoC" class="headerlink" title="什么是 IoC"></a>什么是 IoC</h2><p><code>IoC</code> 的全称叫做 <code>Inversion of Control</code>，可翻译为为「<strong>控制反转</strong>」或「<strong>依赖倒置</strong>」，它主要包含了三个准则：</p>
+<ol>
+<li>高层次的模块不应该依赖于低层次的模块，它们都应该依赖于抽象</li>
+<li>抽象不应该依赖于具体实现，具体实现应该依赖于抽象</li>
+<li><strong>面向接口编程</strong> 而不要面向实现编程</li>
+</ol>
+<p>概念总是抽象的，所以下面将以一个例子来解释上述的概念：</p>
+<!-- 假设产品经理给你提了一个需求，要你构建一款应用叫 `App`，它包含两个模块 `Router` 路由模块和 `Track` 页面监控模块，你听了需求后二话不说，三下五除二半天就写好了，具体实现如下： -->
+<p>假设需要构建一款应用叫 <code>App</code>，它包含一个路由模块 <code>Router</code> 和一个页面监控模块 <code>Track</code>，一开始可能会这么实现：</p>
+<pre><code class="js">// app.js
+import Router from &#39;./modules/Router&#39;;
+import Track from &#39;./modules/Track&#39;;
+
+class App {
+    constructor(options) {
+        this.options = options;
+        this.router = new Router();
+        this.track = new Track();
+
+        this.init();
+    }
+
+    init() {
+        window.addEventListener(&#39;DOMContentLoaded&#39;, () =&gt; {
+            this.router.to(&#39;home&#39;);
+            this.track.tracking();
+            this.options.onReady();
+        });
+    }
+}
+
+// index.js
+import App from &#39;path/to/App&#39;;
+new App({
+    onReady() {
+        // do something here...
+    },
+});</code></pre>
+<p>嗯，看起来没什么问题，但是实际应用中需求是非常多变的，可能需要给路由新增功能（比如实现 <code>history</code> 模式）或者更新配置（启用 <code>history</code>, <code>new Router({ mode: &#39;history&#39; })</code>）。这就不得不在 <code>App</code> 内部去修改这两个模块，这是一个 <code>INNER BREAKING</code> 的操作，而对于之前测试通过了的 <code>App</code> 来说，也必须重新测试。很明显，该代码违背了面向对象六大设计原则之一的 <strong>开闭原则</strong>。</p>
+<blockquote>
+<p>开闭原则的核心：对拓展开放，对修改关闭。</p>
+</blockquote>
+<p>这不是一个好的应用结构，高层次的模块 <code>App</code> 依赖了两个低层次的模块 <code>Router</code> 和 <code>Track</code>，对低层次模块的修改都会影响高层次的模块 <code>App</code>。那么如何解决这个问题呢，解决方案就是接下来要讲述的 <strong>依赖注入（Dependency Injection）</strong>。</p>
+<h2 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h2><p>所谓的依赖注入，简单来说就是把高层模块所依赖的模块通过传参的方式把依赖「注入」到模块内部，上面的代码可以通过依赖注入的方式改造成如下方式：</p>
+<pre><code class="js">// app.js
+class App {
+    constructor(options) {
+        this.options = options;
+        this.router = options.router;
+        this.track = options.track;
+
+        this.init();
+    }
+
+    init() {
+        window.addEventListener(&#39;DOMContentLoaded&#39;, () =&gt; {
+            this.router.to(&#39;home&#39;);
+            this.track.tracking();
+            this.options.onReady();
+        });
+    }
+}
+
+// index.js
+import App from &#39;path/to/App&#39;;
+import Router from &#39;./modules/Router&#39;;
+import Track from &#39;./modules/Track&#39;;
+
+new App({
+    router: new Router(),
+    track: new Track(),
+    onReady() {
+        // do something here...
+    },
+});</code></pre>
+<p>可以看到，通过依赖注入解决了上面所说的 <code>INNER BREAKING</code> 的问题，可以直接在 <code>App</code> 外部对各个模块进行修改而不影响内部。</p>
+<p>是不是就万事大吉了？理想很丰满，但现实却是很骨感的，没过两天产品就给你提了一个新需求，给 <code>App</code> 添加一个分享模块 <code>Share</code>。这样的话又回到了上面所提到的 <code>INNER BREAKING</code> 的问题上：你不得不对 <code>App</code> 模块进行修改加上一行 <code>this.share = options.share</code>，这明显不是我们所期望的。</p>
+<p>虽然 <code>App</code> 通过依赖注入的方式在一定程度上解耦了与其他几个模块的依赖关系，但是还不够彻底，其中的 <code>this.router</code> 和 <code>this.track</code> 等属性其实都还是对「具体实现」的依赖，明显违背了 <code>IoC</code> 思想的准则，那如何进一步抽象 <code>App</code> 模块呢。</p>
+<p><strong>Talk is cheap, show you the code:</strong></p>
+<pre><code class="js">class App {
+    static modules = []
+    constructor(options) {
+        this.options = options;
+        this.init();
+    }
+    init() {
+        window.addEventListener(&#39;DOMContentLoaded&#39;, () =&gt; {
+            this.initModules();
+            this.options.onReady(this);
+        });
+    }
+    static use(module) {
+        Array.isArray(module) ? module.map(item =&gt; App.use(item)) : App.modules.push(module);
+    }
+    initModules() {
+        App.modules.map(module =&gt; module.init &amp;&amp; typeof module.init == &#39;function&#39; &amp;&amp; module.init(this));
+    }
+}</code></pre>
+<p>经过改造后 <code>App</code> 内已经没有「具体实现」了，看不到任何业务代码了，那么如何使用 <code>App</code> 来管理我们的依赖呢：</p>
+<pre><code class="js">// modules/Router.js
+import Router from &#39;path/to/Router&#39;;
+export default {
+    init(app) {
+        app.router = new Router(app.options.router);
+        app.router.to(&#39;home&#39;);
+    }
+};
+// modules/Track.js
+import Track from &#39;path/to/Track&#39;;
+export default {
+    init(app) {
+        app.track = new Track(app.options.track);
+        app.track.tracking();
+    }
+};
+
+// index.js
+import App from &#39;path/to/App&#39;;
+import Router from &#39;./modules/Router&#39;;
+import Track from &#39;./modules/Track&#39;;
+
+App.use([Router, Track]);
+
+new App({
+    router: {
+        mode: &#39;history&#39;,
+    },
+    track: {
+        // ...
+    },
+    onReady(app) {
+        // app.options ...
+    },
+});</code></pre>
+<p>可以发现 <code>App</code> 模块在使用上也非常的方便，通过 <code>App.use()</code> 方法来「注入」依赖，在 <code>./modules/some-module.js</code> 中按照一定的「<strong>约定</strong>」去初始化相关配置，比如此时需要新增一个 <code>Share</code> 模块的话，无需到 <code>App</code> 内部去修改内容：</p>
+<pre><code class="js">// modules/Share.js
+import Share from &#39;path/to/Share&#39;;
+export default {
+    init(app) {
+        app.share = new Share();
+        app.setShare = data =&gt; app.share.setShare(data);
+    }
+};
+
+// index.js
+App.use(Share);
+new App({
+    // ...
+    onReady(app) {
+        app.setShare({
+            title: &#39;Hello IoC.&#39;,
+            description: &#39;description here...&#39;,
+            // some other data here...
+        });
+    }
+});</code></pre>
+<p>直接在 <code>App</code> 外部去 <code>use</code> 这个 <code>Share</code> 模块即可，对模块的注入和配置极为方便。</p>
+<p>那么在 <code>App</code> 内部到底做了哪些工作呢，首先从 <code>App.use</code> 方法说起：</p>
+<pre><code class="js">class App {
+    static modules = []
+    static use(module) {
+        Array.isArray(module) ? module.map(item =&gt; App.use(item)) : App.modules.push(module);
+    }
+}</code></pre>
+<p>可以很清楚的发现，<code>App.use</code> 做了一件非常简单的事情，就是把依赖保存在了 <code>App.modules</code> 属性中，等待后续初始化模块的时候被调用。</p>
+<p>接下来我们看一下模块初始化方法 <code>this.initModules()</code> 具体做了什么事情：</p>
+<pre><code class="js">class App {
+    initModules() {
+        App.modules.map(module =&gt; module.init &amp;&amp; typeof module.init == &#39;function&#39; &amp;&amp; module.init(this));
+    }
+}</code></pre>
+<p>可以发现该方法同样做了一件非常简单的事情，就是遍历 <code>App.modules</code> 中所有的模块，判断模块是否包含 <code>init</code> 属性且该属性必须是一个函数，如果判断通过的话，该方法就会去执行模块的 <code>init</code> 方法并把 <code>App</code> 的实例 <code>this</code> 传入其中，以便在模块中引用它。</p>
+<p>从这个方法中可以看出，要实现一个可以被 <code>App.use()</code> 的模块，就必须满足两个「<strong>约定</strong>」：</p>
+<ol>
+<li>模块必须包含 <code>init</code> 属性</li>
+<li><code>init</code> 必须是一个函数</li>
+</ol>
+<p>这其实就是 <code>IoC</code> 思想中对「<strong>面向接口编程</strong> 而不要面向实现编程」这一准则的很好的体现。<code>App</code> 不关心模块具体实现了什么，只要满足对 <strong>接口</strong> <code>init</code> 的「约定」就可以了。</p>
+<p>此时回去看 <code>Router</code> 的模块的实现就可以很容易理解为什么要怎么写了：</p>
+<pre><code class="js">// modules/Router.js
+import Router from &#39;path/to/Router&#39;;
+export default {
+    init(app) {
+        app.router = new Router(app.options.router);
+        app.router.to(&#39;home&#39;);
+    }
+};</code></pre>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>App</code> 模块此时应该称之为「<strong>容器</strong>」比较合适了，跟业务已经没有任何关系了，它仅仅只是提供了一些方法来辅助管理注入的依赖和控制模块如何执行。</p>
+<p>控制反转（<code>Inversion of Control</code>）是一种「<strong>思想</strong>」，依赖注入（<code>Dependency Injection</code>）则是这一思想的一种具体「<strong>实现方式</strong>」，而这里的 <code>App</code> 则是辅助依赖管理的一个「<strong>容器</strong>」。</p>
+
+            </section>
+            <footer class="article-meta">
+                
+                    <div class="follow">
+                        <img src="/images/follow.png" alt="前端小专栏">
+                        <p class="description">更多干货请关注公众号 <span>前端小专栏</span></p>
+                    </div>
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

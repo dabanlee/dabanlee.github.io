@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            CSS 设计指南 学习笔记 一 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">CSS 设计指南 学习笔记 一</h1>
+                
+            </header>
+            <section class="article-content">
+                 <p>由于 CSS 作用的对象是 HTML ,所以作者在这章主要先讲了一些基本的 HTML 标签的用法和结构。</p>
+<h3 id="1-2-HTML-文档剖析"><a href="#1-2-HTML-文档剖析" class="headerlink" title="1.2 HTML 文档剖析"></a>1.2 HTML 文档剖析</h3><p>作者在这节主要讲了一个 HTML 页面所需的最基本的文档结构如下：</p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- 这里是网页内容 --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>首先 <code>&lt;!DOCTYPE html&gt;</code> 是 HTML5 中新的文档类型声明语法，相比 HTML4 的冗长文档类型声明语法来说 HTML5 是大大的简化了。</p>
+<h4 id="1-2-2-块级元素和行内元素"><a href="#1-2-2-块级元素和行内元素" class="headerlink" title="1.2.2 块级元素和行内元素"></a>1.2.2 块级元素和行内元素</h4><p>作者在这一节介绍了两个比较重要的概念————块级元素和行内元素，默认情况下块级元素会始终占居一行，而行内元素并不会。除了 table 元素的 display 属性比较特殊以外，基本上所有的 HTML 元素的 display 的属性值要么是 block，要么是 inline。作者的一个思想是，无论你想了解哪个 HTML 元素，第一个要问的问题就是：它是块级元素还是行内元素，然后在编写标记的时候预想到这个元素在初始状态下是如何定位的，这样才能进一步想好将来怎么用 CSS 重新定位它，因为块级元素和行内元素在定位上有很大的区别，后面的拓展会详细说明。</p>
+<p>块级元素盒子（一个很重要的概念————盒模型，后面会详细说明）会扩展到与父元素同宽，这也是为什么块级元素会占居一行的原因了，因为所有块级元素的父元素都是 body，而它的默认宽度就是浏览器的视口（viewport）大小，所以默认情况下块级元素的宽度也和浏览器的视口一样宽，这样以来，一个块级元素旁边也就没有空间来容纳另一个块级元素了。</p>
+<p>相比于块级元素会扩展到与父元素同宽，然而行内元素的行为却是恰恰相反，它会尽量的「收缩包裹」其内容（也是盒模型的概念），这也就是为什么几个行内元素会并排显示在一行直到它们排满一行才会另起一行，而每个块级元素会直接另起一行的原因了。</p>
+<p>拓展：</p>
+<p>作者在这一节中并没有对块级元素和行内元素的一些其他特性进行详细的解释，在这里笔者对它们的一些特性知识进行拓展。首先先列出一些常见的块级元素和行内元素：</p>
+<pre><code class="html">&lt;!-- 常见的块级元素 --&gt;
+div, form, table, header, aside, section, article, figure, figcaption, h1~h6, nav, p, pre, blockqoute, canvas, ol, ul, dl
+
+&lt;!-- 常见的行内元素 --&gt;
+span, a, img, label, input, select, textarea, br, i, em, strong, small, button, sub, sup, code</code></pre>
+<p>之前作者提到过无论你想了解哪个 HTML 元素，第一个要问的问题就是：它是块级元素还是行内元素，因为它们在盒模型上的表现有很大的不同，不过在了解它们的不同之前我们还得先知道另外一个概念————<a href="http://www.w3.org/TR/html5/rendering.html#replaced-elements" target="_blank" rel="noopener">替换元素</a>和<a href="http://www.w3.org/TR/html5/rendering.html#non-replaced-elements" target="_blank" rel="noopener">非替换元素</a>，其中替换元素就是指浏览器是根据元素的属性来判断具体要显示的内容的元素，比如 <code>img</code> 标签，浏览器是根据其 <code>src</code> 的属性值来读取这个元素所包含的内容的，常见的替换元素还有 <code>input</code> 、<code>textarea</code>、 <code>select</code>、 <code>object</code>、 <code>iframe</code> 和 <code>video</code> 等等，这些元素都有一个共同的特点，就是浏览器并不直接显示其内容，而是通过其某个属性的值来显示具体的内容，比如浏览器会根据 <code>input</code> 中的 <code>type</code> 的属性值来判断到底应该显示单选按钮还是多选按钮亦或是文本输入框。而对于非替换元素，比如 <code>p</code>、<code>label</code> 元素等等，浏览器这是直接显示元素所包含的内容。看到这里你应该大概的知道了什么是替换元素和非替换元素了。</p>
+<p>对着两个概念有了大概的了解后就可以对 <code>block</code> 和 <code>inline</code> 在盒模型上的表现差异进行了解了，首先是 <code>margin</code> ，<a href="http://www.w3.org/TR/CSS2/box.html#margin-properties" target="_blank" rel="noopener">W3C</a> 对其所支持了元素对象是这么定义的：</p>
+<blockquote>
+<p>Applies to: all elements except elements with table display types other than table-caption, table and inline-table</p>
+</blockquote>
+<p>英语不是很好，没太明白这句话的意思，我的理解就是所有元素都支持 <code>margin</code> 除了 <code>display</code> 属性值为 <code>table-caption</code> 和 <code>table-inline</code> 以外的所有表格显示类型比如 <code>table-row-group</code>、 <code>table-cell</code>、 <code>table-row</code> 和 <code>table-header-group</code>等等,但是为了验证我的理解，我发先 <code>display</code> 属性值为 <code>table</code> 的元素也支持，可能是我对原文标准的理解有误。但还有一个要特别注意的是 <code>margin-top</code> 和 <code>margin-bottom</code> 两个属性比较特殊，它们对非替换行内元素没有效果，下面是 W3C 上对于 <code>margin-top</code> 和 <code>margin-bottom</code> 支持对象的介绍：</p>
+<blockquote>
+<p>Applies to: all elements except elements with table display types other than table-caption, table and inline-table</p>
+<p>These properties have no effect on non-replaced inline elements.</p>
+</blockquote>
+<p>前面一句和之前对 <code>margin</code> 的描述是一样的，这毫无疑问，下面这句话的意思是这些（ <code>margin-top</code> 和 <code>margin-bottom</code> ）属性对非替换行内元素没有效果比如 <code>a</code> 和 <code>span</code>，注意这里是<strong>非替换行内元素</strong>而不单单是非替换元素或者是行内元素。比如 <code>img</code> 就是一个行内元素， <code>margin-top</code> 和 <code>margin-bottom</code> 对它是有效果的，因为它是一个替换元素而不是非替换元素，所以对于「 <code>margin-top</code> 和 <code>margin-bottom</code> 对行内元素没有效果」这种说法是不对的。</p>
+<p>而对于 <code>padding</code> 的支持对象，W3C 是这么描述的：</p>
+<blockquote>
+<p>all elements except table-row-group, table-header-group, table-footer-group, table-row, table-column-group and table-column</p>
+</blockquote>
+<p>上面这句话的意思是除了表格显示类型为 <code>table-row-group</code>、 <code>table-header-group</code>、 <code>table-footer-group</code>、 <code>table-row</code>, <code>table-column-group</code> 和 <code>table-column</code> 的元素不支持，其他所有的元素都支持。</p>
+<p>但这里有些特殊情况需要注意的是，对行内元素比如 <code>span</code> 和 <code>img</code> 设置左右内边距的效果是可见可，但是对行内元素设置上下内边距在有些情况下是不可见的，这些情况又要分为是否为替换元素和是否设置了背景色，为了能更直观的了解这些概念，我在这里做了个表格：</p>
+<p>padding-top 和 padding-bottom 对于行内元素是否可见：</p>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>替换元素（e.g: input）</th>
+            <th>非替换元素（e.g: span）</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>设置背景色</td>
+            <td>可见，影响行高，会撑开父元素</td>
+            <td>可见，不影响行高，不会撑开父元素</td>
+        </tr>
+        <tr>
+            <td>没有设置背景色</td>
+            <td>可见，影响行高，会撑开父元素</td>
+            <td>不可见，不影响行高，不会撑开父元素</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>所以对于「 <code>padding-top</code> 和 <code>padding-bottom</code> 对行内元素没有效果」这种说法也是不对的，因为它们只是对于没有设置背景色的行内非替换元素效果不可见而已，而对于行内替换元素来说，不管是否设置了背景色都是有效果了，并且会把父元素撑开。</p>
+<p>说了这么多 <code>block</code> 和 <code>inline-block</code> 的区别，其实除了这两个常见的 <code>display</code> 属性以外还有一个属性也是非常常见的，那就是 <code>inline-block</code> ，没错，这就是前面两种情况的结合体，它既有 <code>block</code> 的特性又有 <code>inline</code> 的特性，比如把一个 <code>display</code> 属性值为 <code>block</code> 或者 <code>inline</code> 的元素属性值设置成 <code>inline-block</code> 后，既可以用只对行内元素有效的 <code>text-align: center;</code> 声明对其进行居中以外，还可以用 <code>padding-top</code> 和 <code>padding-bottom</code> 对元素设置上下内边距而无需对其设置背景色，并且能把父元素撑开。</p>
+<p>对于块级元素和行内元素的拓展就暂时到这，如果有不明白或者不对的地方也欢迎指出。</p>
+<h3 id="1-3-文档对象模型"><a href="#1-3-文档对象模型" class="headerlink" title="1.3 文档对象模型"></a>1.3 文档对象模型</h3><p>作者在这一小节只要介绍了 HTML 结构所对应的文档对象模型（DOM,Document Object Model）,DOM 是从浏览器的视角来观察页面中的元素以及每个元素的属性，由此可以得出这些元素的一个家族树。通过 DOM 可以很清晰的看出文档中每个元素之间的关系。比如下面的 HTML 代码的 DOM 的家族树就如下图：</p>
+<pre><code class="html">&lt;body&gt;
+    &lt;section&gt;
+        &lt;h1&gt;The Document Object Model&lt;/h1&gt;
+        &lt;p&gt;The page&#39;s HTML markup structure defines the DOM.&lt;/p&gt;
+    &lt;/section&gt;
+&lt;/body&gt;</code></pre>
+<p><img src="/images/posts/stylin-with-css-note/dom.png" alt="DOM"></p>
+<p>上面是一个非常简单的 DOM 结构图，由此你可以和直观的看出 HTML 文档流中每个元素之间的关系，比如到底是父子元素还是兄弟元素。</p>
+<h3 id="1-4-小结"><a href="#1-4-小结" class="headerlink" title="1.4 小结"></a>1.4 小结</h3><p>作者在本章主要讲解了 HTML 标签是怎么为内容提供结构的，以及每个元素会在屏幕上生成什么样子的盒子，比如是行内盒子还是块级盒子，最后又简单的讲解了什么是 DOM ，它是浏览器中文档的模型，而 CSS 可以修改 DOM 中的元素样式属性，从而修改页面本身的布局和外观。</p>
+<h2 id="第二章-CSS-工作原理"><a href="#第二章-CSS-工作原理" class="headerlink" title="第二章 CSS 工作原理"></a>第二章 CSS 工作原理</h2><p>在本章中作者主要讲解了 CSS 如何对 HTML 添加样式的，并且解释了层叠的工作机制比如当元素的同一个属性被多次设置样式后到底应该选择何种样式，这就要靠 CSS 的层叠机制来决定最终应用哪种样式了。</p>
+<p>每个 HTML 元素都有一组样式属性，这些属性涉及元素在文档流中显示时的不同方面，比如在文档流中的位置、边框、背景、颜色等等。CSS 就是一种先选择 HTML 元素，然后设定选中元素 CSS 属性的机制。CSS 选择符和要应用的样式构成一条 CSS 规则。</p>
+<h3 id="2-2-上下文选择器"><a href="#2-2-上下文选择器" class="headerlink" title="2.2 上下文选择器"></a>2.2 上下文选择器</h3><p>上下文选择器的格式如下：</p>
+<pre><code>标签1 标签2 ｛ 声明｝</code></pre><p>其中标签2就是我们要选择的目标，而且只有在标签1是标签2的祖先元素（不一定是父级元素）的情况下才会被选中。上下文选择器严格来讲应该叫「后代组合式选择器（Descendant Comninator Selector）」。</p>
+<p>还有一点要注意的是，上下文选择器以空格作为分隔符，而分组选择器则以逗号作为分隔符，不要弄混。</p>
+<h3 id="2-3-特殊的上下文选择器"><a href="#2-3-特殊的上下文选择器" class="headerlink" title="2.3 特殊的上下文选择器"></a>2.3 特殊的上下文选择器</h3><p>前面一节作者介绍的上下文选择器是以某个祖先元素作为上下文的，只要目标元素在 DOM 结构「上游」存在这么一个祖先元素即可，无论这个祖先元素和目标元素隔了多少层级都没有关系，但有的时候我们需要比「某个祖先元素」更具体的上下文，这时候我们就可以使用一些特殊的选择器了，比如自选择器 <code>&gt;</code>、 紧邻兄弟选择器 <code>+</code>、一般兄弟选择器 <code>~</code> 和通用选择器 <code>*</code>。</p>
+<h4 id="2-3-1-子选择器-gt"><a href="#2-3-1-子选择器-gt" class="headerlink" title="2.3.1 子选择器 &gt;"></a>2.3.1 子选择器 &gt;</h4><pre><code>标签1 &gt; 标签2</code></pre><p>这里的标签2必须是标签1的子元素，也就是说标签1必须是标签2的父元素，而不能是标签2的任何其他祖先元素。</p>
+<h4 id="2-3-2-紧邻兄弟选择器"><a href="#2-3-2-紧邻兄弟选择器" class="headerlink" title="2.3.2 紧邻兄弟选择器 +"></a>2.3.2 紧邻兄弟选择器 +</h4><pre><code>标签1 + 标签2</code></pre><p>在这里标签2必须紧跟在兄弟标签1的后面，否则无效。</p>
+<h4 id="2-3-3-一般兄弟选择器"><a href="#2-3-3-一般兄弟选择器" class="headerlink" title="2.3.3 一般兄弟选择器 ~"></a>2.3.3 一般兄弟选择器 ~</h4><pre><code>标签1 ~ 标签2</code></pre><p>在这里标签2必须跟（不一定要紧跟，只需在标签1的后面即可）在其兄弟标签1后面。</p>
+<h4 id="2-3-4-通用选择器"><a href="#2-3-4-通用选择器" class="headerlink" title="2.3.4 通用选择器 *"></a>2.3.4 通用选择器 *</h4><p>通用选择器 <code>*</code> 是一个是一个通配符，代表文档流中的任意元素，不过通用选择器 <code>*</code> 通常会搭配一些其他选择器来使用，比如：</p>
+<pre><code class="css">section &gt; * {}</code></pre>
+<p>代表 <code>section</code> 的所有子元素，不过一般情况下很少通过通配符来选择某个元素下的所有子元素，因为这涉及到浏览器性能问题，它会影响网页的渲染时间，我们写的时候是从左到右写的，但是浏览器渲染却是从右到左的，就上面这段代码来说，浏览器会先遍历所有的元素，然后在找出哪些元素的父元素是 <code>section</code>，另外举一个例子，有选择器：</p>
+<pre><code class="css">div.container #main &gt; .article {}</code></pre>
+<p>浏览器在渲染时，先把所有类中包含 <code>article</code> 的元素取出来组成一个集合，然后对每一个集合中的元素进行遍历，如果元素的父元素的 <code>id</code> 不为 <code>main</code> 则把元素从集合中删去。 再然后从这个元素的父元素开始向上找，没有找到一个标签名为 <code>div</code> 并且类名中有 <code>container</code> 的元素，就把元素从集合中删去，直到匹配所有的条件，所以在能不使用通配符的情况就尽量不要使用它。</p>
+<h3 id="2-4-ID-和类选择器"><a href="#2-4-ID-和类选择器" class="headerlink" title="2.4 ID 和类选择器"></a>2.4 ID 和类选择器</h3><p>作者在这一节介绍了 <code>id</code> 和 <code>class</code> 选择器，为我们选择元素提供了另一种手段，利用它们可以不考虑元素在文档流中的层次结构，只要在元素中添加了 <code>id</code> 和 <code>class</code> 属性和值，我们就可以通过它们的值来找到目标元素。</p>
+<blockquote>
+<p>可以给 <code>id</code> 和 <code>class</code> 属性设定任何值，但不能以数字或者特殊符号开头。</p>
+</blockquote>
+<h4 id="2-4-3-什么时候用-id，什么时候用-class"><a href="#2-4-3-什么时候用-id，什么时候用-class" class="headerlink" title="2.4.3 什么时候用 id，什么时候用 class"></a>2.4.3 什么时候用 id，什么时候用 class</h4><p><code>id</code> 的用途是在页面中唯一地标识元素，所以每个页面中每一个 <code>id</code> 属性值都是独一无二的。而 <code>class</code> 的目的是为了标识一组具有相同特征的元素，也就是说一个页面中可以出现多个相同的类。</p>
+<p>对于什么时候用 <code>id</code> 这个问题作者的观点是：</p>
+<blockquote>
+<p>每一个顶级区域都应该添加一个 <code>id</code>，从而得到非常明确的上下文关系，以便编写 CSS 时只选择嵌套在相应区域内的标签。</p>
+</blockquote>
+<p>对于什么时候使用 <code>class</code>，由于 <code>class</code> 的目的是为了标识一组具有相同特征的元素，所以如果当页面中有一组元素具有某种相同的特征，就应该毫不犹豫的时候 <code>class</code> 了。</p>
+<p>但是这里也应该注意不要乱用类，避免造成类泛滥，例如：</p>
+<pre><code class="html">&lt;nav&gt;
+    &lt;ul&gt;
+        &lt;li class=&quot;boy&quot;&gt;&lt;a href=&quot;#&quot;&gt;Alan&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;girl&quot;&gt;&lt;a href=&quot;#&quot;&gt;Andrew&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;boy&quot;&gt;&lt;a href=&quot;#&quot;&gt;Angela&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;boy&quot;&gt;&lt;a href=&quot;#&quot;&gt;Angus&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;girl&quot;&gt;&lt;a href=&quot;#&quot;&gt;Anne&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;girl&quot;&gt;&lt;a href=&quot;#&quot;&gt;Annette&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+<p>上面这个例子就是一个典型的类泛滥。</p>
+<h4 id="2-4-4-id-和-class-的小结"><a href="#2-4-4-id-和-class-的小结" class="headerlink" title="2.4.4 id 和 class 的小结"></a>2.4.4 id 和 class 的小结</h4><p>对于什么时候用 id 和什么时候用 class，我想每个人都有不同的看法，这里写说一下笔者的观点，笔者认为能不实用 <code>id</code> 就尽量不使用 <code>id</code>，实际情况是笔者基本不在 CSS 中使用 <code>id</code>，因为在 CSS 的层叠机制中，<code>id</code> 的权重是 <code>class</code> 的10倍，其实很多情况下对某个元素设置某个不一样的样式来覆盖之前的样式并没有效果就是因为之前的样式权重太高，而为了达到效果就要编写权重更高的选择器，所以只有在某个元素需要被 JavaScript 找到的时候才会在某个元素中添加 <code>id</code> ，以便可以通过 <code>document.getElementById()</code> 方法来快速获取需要的元素。</p>
+<h3 id="2-5-属性选择器"><a href="#2-5-属性选择器" class="headerlink" title="2.5 属性选择器"></a>2.5 属性选择器</h3><p>属性选择器包括属性名选择器和属性值选择器，它们是通过元素的属性和值来获取元素的：</p>
+<pre><code>标签名[属性名]
+标签名[属性名=&quot;属性值&quot;]</code></pre><p>例如：</p>
+<pre><code class="css">img[title] {border: 2px solid blue;}
+a[target=&quot;_blank&quot;] {background-image: url(_blank.png);}</code></pre>
+<p>上面第一段代码意思是，如果某个 <code>img</code> 标签带有 <code>title</code> 这个属性，那么就为它添加一个宽度为 2px 的蓝色实线边框。第二段代码的意思是，如果某个 <code>a</code> 标签带有 <code>target</code> 这个属性，并且这个属性的值为 <code>_blank</code> 那么就为这个元素添加一个背景图。</p>
+<p>拓展：</p>
+<p>其实除了以上两种属性选择器，还有其他几种属性选择器作者并没有列出来，这里这几种其他的属性选择器作一个简单的介绍：</p>
+<ul>
+<li><p>标签名[name^=”value”]  让你匹配属性为 <code>name</code> 并且属性值以 <code>value</code> 开始的标签，如:a[href^= “http://“]则匹配所有具有 <code>href</code> 属性并且属性值以 <code>http://</code> 开始的标签。</p>
+</li>
+<li><p>标签名[name$=”value”]  让你匹配属性为 <code>name</code> 并且属性值以 <code>value</code> 结束的标签，如:a[href$=”.com”]则匹配所有具有 <code>href</code> 属性并且属性值以 <code>http://</code> 结束的标签。</p>
+</li>
+<li><p>标签名[name<em>=”value”]  让你匹配属性为 <code>name</code> 并且属性值包含 <code>value</code> 的标签，如:a[href</em>= “renren”]则匹配所有具有 <code>href</code> 属性并且属性值包含 <code>http://</code> 的标签。</p>
+</li>
+<li><p>标签名[name|=”value”]  让你匹配属性为 <code>name</code> 或者以 <code>name-</code> 开始的标签，如:p[lang|= “en”]则匹配具有 <code>lang</code> 属性的 <code>p</code> 标签，不管其属性值是 <code>en</code> 还是 <code>en-us</code> 。</p>
+</li>
+<li><p>标签名[name~=”value”]  让你匹配属性为 <code>name</code> 并且其属性值是具有多个空格分隔的值，其中一个值为 <code>value</code>，如有：</p>
+<pre><code class="html">&lt;a title=&quot;I&#39;m title for learn more&quot;&gt;Learn More&lt;/a&gt;</code></pre>
+<p>  就可以用 p[title~=”learn”] 来选择这个元素。</p>
+</li>
+</ul>
+<p>你应该注意到了这些属性选择器与前面两种属性选择器之间的差别了，通过这些属性选择器我们可以很容易的做出许多意想不到的效果，比如：</p>
+<pre><code class="css">a[href$=&quot;.pdf&quot;] {background-image: url(pdf.png);}</code></pre>
+<p>比如上面这段代码就为链接是 pdf 文档连接的 <code>a</code> 标签添加一个表示这个链接是 pdf 文档的图片，而其他 <code>href</code> 属性的值不是以 <code>.pdf</code> 结尾的 <code>a</code> 标签就不会应用这条样式声明，让用户很清楚的判断这是一个什么类型的链接。</p>
+<h3 id="2-6-伪类"><a href="#2-6-伪类" class="headerlink" title="2.6 伪类"></a>2.6 伪类</h3><p>伪类这个叫法源自它们与类相似，但实际上并没有类会附加到标记中的标签上，伪类分为两种：</p>
+<ul>
+<li><p>UI（User Interface，用户界面）伪类：会在 HTML 元素处于某个状态时（比如鼠标指针位于连接上），为该元素应用 CSS 样式。</p>
+</li>
+<li><p>结构化伪类：会在标记中纯在某种结构上的关系时（比如某个元素是一组元素的第一个或者最有一个元素），为相应的元素应用 CSS 样式。</p>
+</li>
+</ul>
+<h4 id="2-6-1-UI-伪类"><a href="#2-6-1-UI-伪类" class="headerlink" title="2.6.1 UI 伪类"></a>2.6.1 UI 伪类</h4><ol>
+<li><p>链接伪类</p>
+<ul>
+<li><p>link: 链接就在那儿等着用户点击。</p>
+</li>
+<li><p>visited:用户此前点击过这个链接。</p>
+</li>
+<li><p>hover:鼠标指针正悬停在连接上。</p>
+</li>
+<li><p>active:链接正在i被点击（鼠标在元素上按下，还没有释放）。</p>
+<p>注意以上几种链接伪类要按一定的顺序才有效果，为了方便记忆作者是这么建议的：”LoVe?HA!”，大写字母就是每个伪类的第一个字母，其实也可以这么记： “LoVe,HAte”，其实都差不多就是了。</p>
+<blockquote>
+<p>一个冒号（:）表示伪类，两个冒号（::）表示 CSS3 新增的伪元素。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>:focus 伪类</p>
+<p> 表单中的文本字段在用户单击它时会获得焦点，例如：</p>
+<pre><code> input:focus {border: 1px solid blud;}</code></pre><p> 这段代码的意思就是当用户单击表单中的文本字段的时候，为该 <code>input</code> 标签添加宽度为 1px 的蓝色实线边框，需要注意的是，伪类的冒号要紧跟着标签名，之间不能有空格，否则该声明无效。</p>
+</li>
+<li><p>:target 伪类</p>
+<p> 如果用户点击一个指向页面中其他元素的链接，则哪个元素就是目标（target），可以用 <code>:target</code> 伪类选中它，比如：</p>
+<pre><code> &lt;a href=&quot;#more-info&quot;&gt;More Information&lt;/a&gt;</code></pre><p> 位于页面其他地方、<code>id</code> 为 <code>more-info</code> 的那个元素就是目标元素，该元素可能是这样的：</p>
+<pre><code> &lt;h2 id=&quot;more=info&quot;&gt;This is the information you are looking for.&lt;/h2&gt;</code></pre><p> 那么 CSS 规则如下：</p>
+<pre><code> #more-info:target {background: #eee;}</code></pre><p> 此时会在用户点击链接转向 <code>id</code> 为 <code>more-info</code> 的元素时，该目标元素的背景就会变成浅灰色。</p>
+</li>
+</ol>
+<h4 id="2-6-2-结构化伪类"><a href="#2-6-2-结构化伪类" class="headerlink" title="2.6.2 结构化伪类"></a>2.6.2 结构化伪类</h4><ol>
+<li><p><code>first-child</code>, <code>last-child</code> 和 <code>nth-child(n)</code></p>
+<pre><code> e:first-child
+ e:last-child</code></pre><p> <code>first-child</code> 和 <code>last-child</code> 分别代表一组同胞元素中的第一个元素和最后一个元素，而 <code>nth-child(n)</code> 则代表一组同胞元素中的任何一个元素，其中 <code>n</code> 表示一个整数（也可以是 odd-奇数 或 even-偶数）或者也可以是一个算数表达式（2n + 1），例如：</p>
+<pre><code> &lt;ul&gt;
+     &lt;li&gt;My Fast Pony&lt;/li&gt;
+     &lt;li&gt;Steady Trotter&lt;/li&gt;
+     &lt;li&gt;Slow Ol&#39; Nag&lt;/li&gt;
+ &lt;/ul&gt;
+
+ ul li:first-child {color: black;}
+ ul li:nth-child(2) {color: red;}
+ ul li:last-child {color: blue;}</code></pre><p> 上面的 HTML 应用了上面的 CSS 规则后，无序列表的第一个元素字体颜色就会变成黑色，第二个元素变成红色，最后一个元素就变成蓝色。</p>
+</li>
+</ol>
+<h3 id="2-7-伪元素"><a href="#2-7-伪元素" class="headerlink" title="2.7 伪元素"></a>2.7 伪元素</h3><p>顾名思义，伪元素就是文档中若有实无的元素，下面是几个比较常用的伪元素。</p>
+<ol>
+<li><p>::first-letter 伪元素，比如：</p>
+<pre><code> p::first-letter {font-size: 300%;}</code></pre><p> 这样 <code>p</code> 标签的第一个字母大小就会变成原来的 3 倍了，而其他元素则不会。</p>
+</li>
+<li><p>::first-line 伪元素：可以选中文本段落的第一行。</p>
+</li>
+<li><p>::before 和 ::after 伪元素</p>
+<pre><code> e::before
+ e::after</code></pre><p> 可用在特定元素前面或后面添加特殊内容，比如：</p>
+<pre><code> &lt;p class=&quot;age&quot;&gt;25&lt;/p&gt;
+
+ .age::before { content: &quot;Age: &quot;;}
+ .age::after { content: &quot; years&quot;;}</code></pre><p> 这里需要注意的是，对于 <code>::before</code> 和 <code>::after</code> 伪元素，其 <code>content</code> 属性是必须的，还有就是搜索引擎不会取得伪元素的信息（因为它在文档流中并不存在），因此不要通过伪元素添加一些对搜索引擎来说是重要的内容。</p>
+</li>
+</ol>
+<p>拓展：</p>
+<p>其实伪元素前面冒号可以是两个也可以是一个，但是为了区别伪类，笔者建议大家还是使用两个冒号。还有一个要注意的是，比如通过 <code>::before</code> 和 <code>::after</code> 伪元素为 <code>class</code> 为 <code>pseudo-element</code> 添加两个伪元素，则生成的两个伪元素分别处于 <code>pseudo-element</code> 元素的内部，也就是说是 <code>pseudo-element</code> 元素的子元素，并且分别位于 <code>pseudo-element</code> 元素的内容的最前面和最后面，代码如下：</p>
+<pre><code class="html">&lt;div class=&quot;pseudo-element&quot;&gt;
+    &lt;p&gt;Pseudo Element&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+.pseudo-element::after,
+.pseudo-element::before {
+    content: &quot;&quot;;
+}
+&lt;/style&gt;</code></pre>
+<p><img src="/images/posts/stylin-with-css-note/pseudo-element.png" alt="Pseudo Element"></p>
+<p>如上图所示，生成的两个伪元素分别处于 <code>pseudo-element</code> 元素的内部，并且分别位于 <code>pseudo-element</code> 元素的内容 <code>p</code> 标签的前面和后面，而不是如下图所示的位于 <code>pseudo-element</code> 元素外部的前面和后面：</p>
+<p><img src="/images/posts/stylin-with-css-note/pseudo-element-2.png" alt="Pseudo Element"></p>
+<h3 id="2-9-层叠"><a href="#2-9-层叠" class="headerlink" title="2.9 层叠"></a>2.9 层叠</h3><p>层叠就是层叠样式表中的层叠，是一种样式在文档层次中逐层叠加的过程，目的是让浏览器面对某个标签特定属性值的多个来源确定最终使用哪个值。</p>
+<p>层叠是 CSS 的核心机制，理解了它才能以最经济的方式写出最容易改动的 CSS,让文档外观在达到设计要求的同时，也给用户留下一些空间，让他们能根据需要更改文档的显示效果。</p>
+<h4 id="2-9-1-样式来源"><a href="#2-9-1-样式来源" class="headerlink" title="2.9.1 样式来源"></a>2.9.1 样式来源</h4><p>作者在这一节中介绍了样式的几种来源：</p>
+<ul>
+<li><p>浏览器默认样式表</p>
+</li>
+<li><p>用户样式表</p>
+</li>
+<li><p>作者链接样式表</p>
+</li>
+<li><p>作者嵌入样式</p>
+</li>
+<li><p>作者行内样式</p>
+</li>
+</ul>
+<p>作者在书中是这么描述的：</p>
+<blockquote>
+<p>浏览器会按照上面的顺序依次检查每个来源的样式，并在有定义的情况下，更新对每个标签属性值的设定，整个检查更新过程结束后，再将每个标签以最终设定的样式显示出来。</p>
+</blockquote>
+<h4 id="2-9-4-计算特指度"><a href="#2-9-4-计算特指度" class="headerlink" title="2.9.4 计算特指度"></a>2.9.4 计算特指度</h4><p>作者在这一节主要介绍了特指度的计算方法，相比作者个计算方式，笔者个人还是比较喜欢自己之前的计算方式，虽然差不多，如下：</p>
+<p>首先规定四个等级：A - B - C - D</p>
+<ol>
+<li>A 等级代表内联样式：例如 <code>style=&quot; &quot;</code>，权值为：1000；</li>
+<li>B 等级代表 ID 选择器：例如 <code>#main</code>，权值为：100；</li>
+<li>C 等级代表类、伪类和属性选择器： <code>.class</code> 和 <code>[title]</code>，权值为：10；</li>
+<li>D 等级代表元素（标签）名或者伪元素选择器：例如 <code>p</code> 和 <code>::after</code>，权值为：1。</li>
+</ol>
+<p>计算完每个值后再将每个值加起来，哪个值大哪个值的权重就高。</p>
+<p>例如:</p>
+<pre><code class="css">body #main .class a[title]::after {}</code></pre>
+<p>我们先分析它由哪些选择器构成，上面这条规则有一个 <code>id</code> 选择器（<code>#main</code>），一个类选择器（<code>.class</code>），一个属性选择器（<code>[title]</code>）、一个伪元素选择器(<code>::after</code>)和两个标签名选择器（<code>body</code> 和 <code>a</code>），所以它的权重就等于：</p>
+<pre><code> 100 × 1 + 10 × 2 + 1 × 3 = 123</code></pre><p>还有一点要注意的是，权重值 001(12) 与 0020 相比，任然是 0020 的权重更高，对于权重一样的情况，则后声明的样式更高。</p>
+<h3 id="2-10-小结"><a href="#2-10-小结" class="headerlink" title="2.10 小结"></a>2.10 小结</h3><p>作者在本章介绍了 CSS 的一些规则，比如各种选择器的使用，层叠机制，还有权重的计算。</p>
+
+            </section>
+            <footer class="article-meta">
+                
+                    <div class="follow">
+                        <img src="/images/follow.png" alt="前端小专栏">
+                        <p class="description">更多干货请关注公众号 <span>前端小专栏</span></p>
+                    </div>
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

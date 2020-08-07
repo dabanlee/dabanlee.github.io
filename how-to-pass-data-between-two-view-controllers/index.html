@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            Swift 中如在两个页面中传值 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">Swift 中如在两个页面中传值</h1>
+                
+            </header>
+            <section class="article-content">
+                 <h2 id="Swift-中页面传值的几种常见方式"><a href="#Swift-中页面传值的几种常见方式" class="headerlink" title="Swift 中页面传值的几种常见方式"></a>Swift 中页面传值的几种常见方式</h2><ul>
+<li>属性传值</li>
+<li>代理传值</li>
+<li>通知传值</li>
+<li>单例传值</li>
+<li>闭包传值</li>
+</ul>
+<h3 id="属性传值"><a href="#属性传值" class="headerlink" title="属性传值"></a>属性传值</h3><p>假设现在有 <code>ViewA</code> 和 <code>ViewB</code> 两个页面，现在需要从 <code>ViewA</code> 页面带上数据跳转到 <code>ViewB</code> 页面并显示出来。</p>
+<p>属性传值就是实现这种正向传值的最简单的一种页面传值的方式，具体的实现方式就是在 <code>ViewA</code> 跳转 <code>ViewB</code> 页面之前，先实例化 <code>ViewB</code>，把需要传递到 <code>ViewB</code> 的数据保存到 <code>ViewB</code> 实例的属性上，这样在跳转到 <code>ViewB</code> 页面的时候，就可以通过 <code>self.xxx</code> 获取到 <code>ViewA</code> 传过来的值了。具体代码如下：</p>
+<pre><code class="swift">// ViewA
+class ViewA: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    func toViewB() {
+        let viewB = ViewB()
+        viewB.data = &quot;data from ViewA&quot;
+        navigationController?.pushViewController(viewB, animated: true)
+    }
+}
+
+// ViewB
+class ViewB: UIViewController {
+    var data: String?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        print(data) // &quot;data from ViewA&quot;
+    }
+}</code></pre>
+<h3 id="代理传值"><a href="#代理传值" class="headerlink" title="代理传值"></a>代理传值</h3><p>代理传值比较适合传值回前一个页面的情况。</p>
+<p>假设现在有 <code>ViewA</code> 和 <code>ViewB</code> 两个页面，现在需要从 <code>ViewB</code> 反向传值给 <code>ViewA</code>：</p>
+<pre><code class="swift">// ViewA
+class ViewA: UIViewController, CustomDelegate {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    @objc func toViewB() {
+        let viewB = ViewB()
+        viewB.data = &quot;data from ViewA&quot;
+        viewB.delegate = self
+        navigationController?.pushViewController(viewB, animated: true)
+    }
+
+    func passValue(_ text: String) {
+        print(text) // data from ViewB
+    }
+}
+
+// ViewB
+
+protocol CustomDelegate: NSObjectProtocol {
+    func passValue(_ text: String)
+}
+
+class ViewB: UIViewController {
+    weak var delegate: CustomDelegate?
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
+    @objc back() {
+        delegate?.passValue(&quot;data from ViewB&quot;)
+        navigationController?.popViewController(animated: true)
+    }
+}</code></pre>
+<h3 id="通知传值"><a href="#通知传值" class="headerlink" title="通知传值"></a>通知传值</h3><p>假如有 <code>A</code>, <code>B</code>, <code>C</code> 三个页面，现在需要从 <code>C</code> 页面传值到 <code>A</code> 页面，可以通过「通知传值」的方式实现：</p>
+<pre><code class="swift">class viewA: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // 添加通知
+        NotificationCenter.default.addObserver(self, selector: #selector(notify), name: NSNotification.Name(rawValue: &quot;notifyName&quot;), object: nil)
+    }
+
+    @objc func notify(_ notification: Notification) {
+        print(notification.object) // data from viewC
+    }
+
+    // 及时移除通知
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+}
+
+class viewC: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // 发送通知
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: &quot;notifyName&quot;), object: &quot;data from viewC&quot;)
+    }
+}</code></pre>
+<h3 id="单例传值"><a href="#单例传值" class="headerlink" title="单例传值"></a>单例传值</h3><h3 id="闭包传值"><a href="#闭包传值" class="headerlink" title="闭包传值"></a>闭包传值</h3>
+            </section>
+            <footer class="article-meta">
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            如何在 l5-repository 中使用 transform - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">如何在 l5-repository 中使用 transform</h1>
+                
+            </header>
+            <section class="article-content">
+                 <h2 id="在-Laravel-中使用"><a href="#在-Laravel-中使用" class="headerlink" title="在 Laravel 中使用"></a>在 Laravel 中使用</h2><p>安装好 <code>l5-repository</code> 包后，在 <code>config/app.php</code> 中把下面代码添加到 <code>providers</code> 中：</p>
+<pre><code class="php">&#39;providers&#39; =&gt; [
+    \\ ...
+    Prettus\Repository\Providers\RepositoryServiceProvider::class,
+],</code></pre>
+<p>然后在命令行中发布配置：</p>
+<pre><code class="sh">php artisan vendor:publish --provider &quot;Prettus\Repository\Providers\RepositoryServiceProvider&quot;</code></pre>
+<p>发布配置之后，就可以利用命令 <code>php artisan make:entity xxx</code> 来发布 <code>entity</code> 了，比如发布 <code>Post</code> 实体为例：</p>
+<pre><code class="sh">php artisan make:entity Post</code></pre>
+<p>就会在项目中生成模型、控制器等相关文件。</p>
+<h2 id="启用-l5-repository-的字段转换功能"><a href="#启用-l5-repository-的字段转换功能" class="headerlink" title="启用 l5-repository 的字段转换功能"></a>启用 l5-repository 的字段转换功能</h2><p><code>transform</code> 的配置文件在 <code>app\Transformers</code> 目录中，把需要转换的字段填到对应转换文件中的 <code>transform</code> 函数中，例如：</p>
+<pre><code class="php">public function transform(Post $post)
+{
+    return [
+        &#39;id&#39; =&gt; (int) $post-&gt;id,
+        &#39;title&#39; =&gt; $post-&gt;title,
+        &#39;content&#39; =&gt; $post-&gt;content,
+        &#39;createdAt&#39; =&gt; $post-&gt;created_at,
+        &#39;updatedAt&#39; =&gt; $post-&gt;updated_at
+    ];
+}</code></pre>
+<p><strong>注意，此时配置完转换文件后，并不会生效，还需要在 <code>PostRepositoryEloquent</code> 中「启用展示」才会生效：</strong></p>
+<pre><code class="php">use App\Presenters\PostPresenter;
+
+class PostRepositoryEloquent extends BaseRepository implements PostRepository
+{
+    public function presenter()
+    {
+        return PostPresenter::class;
+    }
+}</code></pre>
+
+            </section>
+            <footer class="article-meta">
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

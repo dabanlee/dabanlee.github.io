@@ -1,0 +1,27 @@
+
+.follow {
+    margin-top: 20px;
+    .description {
+        text-align: center;
+        color: #333;
+        span {
+            font-weight: bold;
+        }
+    }
+}
+
+a[title="站长统计"] {
+    display: none;
+}
+
+.container {
+    width: 100%;
+    max-width: $content-width;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 0 2rem;
+}
+
+.text-center {
+    text-align: center;
+}

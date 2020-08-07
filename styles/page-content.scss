@@ -1,0 +1,44 @@
+body[data-page="home"] {
+    h2 {
+        margin: 0;
+        margin-bottom: 20px;
+    }
+
+    p {
+        margin: 14px 0;
+    }
+
+    .article {
+        position: relative;
+        padding: 30px 0;
+        border-bottom: #EBF2F6 1px solid;
+
+        &:after {
+            display: block;
+            content: "";
+            width: 7px;
+            height: 7px;
+            border: #E7EEF2 1px solid;
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            margin-left: -5px;
+            background: #FFF;
+            border-radius: 100%;
+            box-shadow: #FFF 0 0 0 5px;
+        }
+    }
+}
+
+.article-meta {
+    color: #666;
+}
+
+.article-content {
+    margin-top: 50px;
+}
+
+.page-content {
+    color: #333;
+    overflow: hidden;
+}

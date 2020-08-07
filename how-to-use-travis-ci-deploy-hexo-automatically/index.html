@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            如何使用 Travis CI 自动部署 hexo - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">如何使用 Travis CI 自动部署 hexo</h1>
+                
+            </header>
+            <section class="article-content">
+                 <h2 id="生成-SSH-Key"><a href="#生成-SSH-Key" class="headerlink" title="生成 SSH Key"></a>生成 SSH Key</h2><p>在命令行中使用 <code>ssh-keygen -t rsa -C &quot;username@example.com&quot;</code> 命令生成 SSH Key。</p>
+<h2 id="将-SSH-Key-添加到-Github-中"><a href="#将-SSH-Key-添加到-Github-中" class="headerlink" title="将 SSH Key 添加到 Github 中"></a>将 SSH Key 添加到 Github 中</h2><p>执行上面命令后，会在 <code>~/.ssh</code> 目录生成两个文件，分别是 <code>id_rsa.pub</code> 和 <code>id_rsa</code>，分别对应着「公钥」和「私钥」。我们把 <code>id_rsa.pub</code> 的内容添加到 <a href="https://github.com/settings/ssh" target="_blank" rel="noopener">GitHub</a> 中，然后保存即可。</p>
+<h2 id="Travis-CI-配置"><a href="#Travis-CI-配置" class="headerlink" title="Travis CI 配置"></a>Travis CI 配置</h2><h3 id="安装-Travis-CI-的命令行工具"><a href="#安装-Travis-CI-的命令行工具" class="headerlink" title="安装 Travis CI 的命令行工具"></a>安装 Travis CI 的命令行工具</h3><pre><code class="sh"># 需要提前装好 gem
+$ gem install travis</code></pre>
+<h3 id="登陆-Travis-CI"><a href="#登陆-Travis-CI" class="headerlink" title="登陆 Travis CI"></a>登陆 Travis CI</h3><p>此时输入 GitHub 账号和密码即可。</p>
+<pre><code class="sh"># 需要提前装好 gem
+$ travis login --auto</code></pre>
+<h3 id="加密私钥并上传至-Travis-CI"><a href="#加密私钥并上传至-Travis-CI" class="headerlink" title="加密私钥并上传至 Travis CI"></a>加密私钥并上传至 Travis CI</h3><p>前面我们通过 <code>ssh-keygen</code> 分别生成了 <code>id_rsa.pub</code> 公钥和 <code>id_rsa</code> 私钥，前面我们把公钥 <code>id_rsa.pub</code> 添加到了 GitHub，现在我们则需要把私钥 <code>id_rsa</code> 加密，再上传到 Travis CI 中，下面是加密方法：</p>
+<pre><code class="sh">$ travis encrypt-file ~/.ssh/id_rsa --add</code></pre>
+<p>然后会在当前目录生成一个名为 <code>id_rsa.enc</code> 的加密文件。</p>
+<p>然后 Travis CI 会自动检测当前目录中的 <code>git</code> 信息，并且添加到 <code>.travis.yml</code> 中去。所以在进行此步操作前，当前目录下要先创建 <code>.travis.yml</code> 配置文件，否则会报错。</p>
+<h3 id="配置-SSH-设置"><a href="#配置-SSH-设置" class="headerlink" title="配置 SSH 设置"></a>配置 SSH 设置</h3><p>在当前目录下新建一个文件 <code>ssh_config</code>：</p>
+<pre><code class="text">Host github.com
+User git
+StrictHostKeyChecking no
+IdentityFile ~/.ssh/id_rsa
+IdentitiesOnly yes</code></pre>
+<h3 id="指定-openssl-解密后生成的位置："><a href="#指定-openssl-解密后生成的位置：" class="headerlink" title="指定 openssl 解密后生成的位置："></a>指定 <code>openssl</code> 解密后生成的位置：</h3><pre><code class="yml">- openssl aes-256-cbc -K $encrypted_26b4962af0e7_key -iv $encrypted_26b4962af0e7_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d</code></pre>
+<h3 id="修改目录权限"><a href="#修改目录权限" class="headerlink" title="修改目录权限"></a>修改目录权限</h3><pre><code class="yml">- chmod 600 ~/.ssh/id_rsa</code></pre>
+<h3 id="将密钥加入系统"><a href="#将密钥加入系统" class="headerlink" title="将密钥加入系统"></a>将密钥加入系统</h3><pre><code class="yml">- ssh-add ~/.ssh/id_rsa
+- cp .travis/ssh_config ~/.ssh/config</code></pre>
+<h3 id="修改git信息"><a href="#修改git信息" class="headerlink" title="修改git信息"></a>修改git信息</h3><pre><code class="yml">- git config --global user.name &#39;username&#39;
+- git config --global user.email username@example.com</code></pre>
+<h3 id="travis-yml-配置"><a href="#travis-yml-配置" class="headerlink" title=".travis.yml 配置"></a>.travis.yml 配置</h3><p>指定语言、版本和分支：</p>
+<pre><code class="yml">language: node_js
+node_js:
+  - &#39;8&#39;
+branches:
+  only:
+    - write</code></pre>
+<p>配置好 <code>.travis.yml</code> 后，我们只需要把 <code>hexo</code> 代码推送到 <code>write</code> 分支即可，然后 Travis CI 将会把构建的结构同步到 <code>master</code> 分支。</p>
+<h2 id="Hexo-配置"><a href="#Hexo-配置" class="headerlink" title="Hexo 配置"></a>Hexo 配置</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code class="yml">install:
+  - npm install hexo-cli -g
+  - npm install hexo-deployer-git --save
+  - npm install</code></pre>
+<h3 id="执行-hexo-命令生成网页"><a href="#执行-hexo-命令生成网页" class="headerlink" title="执行 hexo 命令生成网页"></a>执行 hexo 命令生成网页</h3><pre><code class="yml">script:
+  - hexo clean
+  - hexo generate
+  - hexo deploy</code></pre>
+<h2 id="最终配置"><a href="#最终配置" class="headerlink" title="最终配置"></a>最终配置</h2><pre><code class="yml">language: node_js
+node_js:
+  - &#39;8&#39;
+branches:
+  only:
+    - write
+cache:
+  directories:
+    - node_modules
+before_install:
+  - openssl aes-256-cbc -K $encrypted_ff761c8d00fa_key -iv $encrypted_ff761c8d00fa_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
+  - chmod 600 ~/.ssh/id_rsa
+  - eval $(ssh-agent)
+  - ssh-add ~/.ssh/id_rsa
+  - cp .travis/ssh_config ~/.ssh/config
+  - git config --global user.name &#39;JustClear&#39;
+  - git config --global user.email &#39;576839360@qq.com&#39;
+install:
+  - npm install hexo-cli -g
+  - npm install hexo-deployer-git --save
+  - npm install
+script:
+  - hexo clean
+  - hexo generate
+  - hexo deploy</code></pre>
+
+            </section>
+            <footer class="article-meta">
+                
+                    <div class="follow">
+                        <img src="/images/follow.png" alt="前端小专栏">
+                        <p class="description">更多干货请关注公众号 <span>前端小专栏</span></p>
+                    </div>
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

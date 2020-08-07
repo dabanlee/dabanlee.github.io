@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            在 Swift 中如何对视图进行自动布局约束 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">在 Swift 中如何对视图进行自动布局约束</h1>
+                
+            </header>
+            <section class="article-content">
+                 <h2 id="使用-NSLayoutConstraint-对视图进行自动布局约束"><a href="#使用-NSLayoutConstraint-对视图进行自动布局约束" class="headerlink" title="使用 NSLayoutConstraint 对视图进行自动布局约束"></a>使用 NSLayoutConstraint 对视图进行自动布局约束</h2><p><img src="/images/posts/how-to-autolayout-the-view-in-swift/dock-0.jpg" alt="Dock Vertical"><br><img src="/images/posts/how-to-autolayout-the-view-in-swift/dock-1.jpg" alt="Dock Horizontal"></p>
+<p>假如要做如上图类似 iPhone 底部 Dock 栏效果的约束，纯代码可以这么实现：</p>
+<pre><code class="swift">import UIKit
+
+class ViewController: UIViewController {
+    var dock: UIView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1)
+
+        dock = UIView()
+        dock.backgroundColor = UIColor.white
+        dock.layer.cornerRadius = 13
+        view.addSubview(dock)
+        initDockConstraint()
+    }
+
+    func initDockConstraint() {
+        let leading = NSLayoutConstraint(item: dock, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1, constant: 20)
+        let trailing = NSLayoutConstraint(item: dock, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1, constant: -20)
+        let bottom = NSLayoutConstraint(item: dock, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -20)
+        let height = NSLayoutConstraint(item: dock, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 60)
+
+        dock.translatesAutoresizingMaskIntoConstraints = false
+
+        height.isActive = true
+        bottom.isActive = true
+        leading.isActive = true
+        trailing.isActive = true
+    }
+}</code></pre>
+<p><code>NSLayoutConstraint</code> 函数详解：</p>
+<pre><code class="swift">NSLayoutConstraint(
+    item: viewOne, // 要添加约束的视图本身
+    attribute: .leading, // 要添加约束的属性，比如对左边距进行约束
+    relatedBy: .equal, // 大于等于 小于等于 等于
+    toItem: viewTwo, // 相对于另外一个空间
+    attribute: .leading, // 相对于另外一个空间的属性，比如左边距
+    multiplier: 1, // 乘以多少
+    constant: 0, // 加上多少
+)
+
+// viewOne.attribute = viewTwo.attribute * multiplier + constant
+// eg. dock.leading = view.leading * 1 + 20</code></pre>
+<p>你可能会发现，为了添加一组约束，要写非常非常多的代码，那有没有什么方法可以简化约束的代码量呢，答案是肯定的。上面的方式是 Swift 中原生的方法，而 Swift 生态中又有非常多优秀的第三方库，其中用得比较多的自动布局库叫做 <code>SnapKit</code>。下面我们将展示如何使用 <code>SnapKit</code> 来重构上面的代码：</p>
+<pre><code class="swift">import UIKit
+import SnapKit
+
+class ViewController: UIViewController {
+    // ...
+
+    func initDockConstraint() {
+        dock.snp.makeConstraints { (make) in
+            make.leading.equalTo(view).offset(20)
+            make.trailing.bottom.equalTo(view).offset(-20)
+            make.height.equalTo(60)
+        }
+    }
+}</code></pre>
+<p>可以发现代码量少了非常多。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://github.com/SnapKit/SnapKit" target="_blank" rel="noopener">SnapKit</a></li>
+</ol>
+
+            </section>
+            <footer class="article-meta">
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

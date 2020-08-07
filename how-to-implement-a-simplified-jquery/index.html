@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            如何实现一个简化版的 jQuery - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">如何实现一个简化版的 jQuery</h1>
+                
+            </header>
+            <section class="article-content">
+                 <p>对于操作 <code>DOM</code> 来说，<code>jQuery</code> 是非常方便的一个库，虽然如今随着 <code>React</code>, <code>Vue</code> 之类框架的流行，<code>jQuery</code> 用得越来越少了，但是其中很多思想还是非常值得我们学习的，这篇文章将介绍如何从零开始实现一个简化版 <code>jQuery</code>。</p>
+<p>在这里，我把这个库命名为 <a href="https://github.com/JustClear/clus" target="_blank" rel="noopener">Clus(class 的谐音)</a>，下面以 <code>$</code> 符号代替。</p>
+<p>首先需要声明一个构造函数并做一些初始化操作：</p>
+<pre><code class="js">function $(selector) {
+    return new $.fn.init(selector);
+}
+
+$.fn = $.prototype = {
+    contructor: $,
+    init,
+};</code></pre>
+<p>可以看到，该构造函数返回一个 <code>$.fn.init</code> 的实例，这样做的好处就是在使用的时候不要每次都 <code>new</code> 一个构造函数就可以创建一个新的实例了，可以看出来，整个核心都在 <code>init</code> 函数上了：</p>
+<pre><code class="js">function init(selector) {
+    const fragmentRE = /^\s*&lt;(\w+|!)[^&gt;]*&gt;/;
+    const selectorType = $.type(selector);
+    const elementTypes = [1, 9, 11];
+
+    let dom;
+
+    if (!selector) {
+        dom = [],
+        dom.selector = selector;
+    } else if (elementTypes.indexOf(selector.nodeType) !== -1 || selector === window) {
+        dom = [selector],
+        selector = null;
+    } else if (selectorType === &#39;function&#39;) {
+        return $(document).ready(selector);
+    } else if (selectorType === &#39;array&#39;) {
+        dom = selector;
+    } else if (selectorType === &#39;object&#39;) {
+        dom = [selector],
+        selector = null;
+    } else if (selectorType === &#39;string&#39;) {
+        if (selector[0] === &#39;&lt;&#39; &amp;&amp; fragmentRE.test(selector)) {
+            dom = $.parseHTML(selector),
+            selector = null;
+        } else {
+            dom = [].slice.call(document.querySelectorAll(selector));
+        }
+    }
+
+    dom = dom || [];
+    $.extend(dom, $.fn);
+    dom.selector = selector;
+
+    return dom;
+}</code></pre>
+<p>可以很清楚的看到，根据传入的参数类型的不同进行一些不同的操作，比如传入的是函数的话，则该函数里的操作的都是 <code>DOM Ready</code> 之后的操作了；再比如传入的是字符串的话，并且如果是标签的话，则会把这段标签字符串解析成 <code>DOM Fragment</code>，如果是普通字符串，则会调用 <code>document.querySelectorAll()</code> 方法来查找 DOM。</p>
+<p>相信大家都能很容易的看明白上面的代码，不过有一点值得一提的是 <code>$.extend(dom, $.fn);</code> 这段代码，其含义是把实例上的所有方法都添加到 <code>dom</code> 这个数组对象中，这样做的目的就是为了可以直接链式调用某个实例的方法，比如 <code>$(&#39;.clus&#39;).addClass(&#39;hello&#39;)</code>，这个 <code>addClass()</code> 方法就是在 <code>$.fn</code> 上实现的。因此所有在 <code>$.fn</code> 实现的方法都可以通过 <code>$(selector).method()</code> 这种方式来调用了。</p>
+<p>至于 <code>extend()</code> 方法我认为是除了 <code>init()</code> 方法以外，整个库中最核心的一个方法了，代码如下：</p>
+<pre><code class="js">export default function extend() {
+    let options, name, clone, copy, source, copyIsArray,
+        target = arguments[0] || {},
+        i = 1,
+        length = arguments.length,
+        deep = false;
+
+    if (typeof target === &#39;boolean&#39;) {
+        deep = target;
+        target = arguments[i] || {};
+        i++;
+    }
+
+    if (typeof target !== &#39;object&#39; &amp;&amp; $.type(target) !== &#39;function&#39;) {
+        target = {};
+    }
+
+    if (i === length) {
+        target = this;
+        i--;
+    }
+
+    for (; i &lt; length; i++) {
+        //
+        if ((options = arguments[i]) !== null) {
+            // for in source object
+            for (name in options) {
+
+                source = target[name];
+                copy = options[name];
+
+                if (target == copy) {
+                    continue;
+                }
+
+                // deep clone
+                if (deep &amp;&amp; copy &amp;&amp; ($.isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+                    // if copy is array
+                    if (copyIsArray) {
+                        copyIsArray = false;
+                        // if is not array, set it to array
+                        clone = source &amp;&amp; Array.isArray(source) ? source : [];
+                    } else {
+                        // if copy is not a object, set it to object
+                        clone = source &amp;&amp; $.isPlainObject(source) ? source : {};
+                    }
+
+                    target[name] = extend(deep, clone, copy);
+                } else if (copy !== undefined) {
+                    target[name] = copy;
+                }
+            }
+        }
+    }
+
+    return target;
+}</code></pre>
+<p>可以看到，和 <code>jQuery</code> 的实现一毛一样，没错就是从那儿 copy 过来的当然一样。</p>
+<p>下面以 <code>addClass()</code> 方法为例介绍如何操作 DOM 的：</p>
+<pre><code class="js">function addClass(cls) {
+    let classes, clazz, el, cur, curValue, finalValue, j, i = 0;
+
+    if (typeof cls === &#39;string&#39; &amp;&amp; cls) {
+        classes = cls.match(rnotwhite) || [];
+
+        while((el = this[i++])) {
+            curValue = getClass(el);
+            cur = (el.nodeType === 1) &amp;&amp; ` ${curValue} `.replace(rclass, &#39; &#39;);
+
+            if (cur) {
+                j = 0;
+
+                while((clazz = classes[j++])) {
+                    // to determine whether the class that to add has already existed
+                    if (cur.indexOf(` ${clazz} `) == -1) {
+                        cur += clazz + &#39; &#39;;
+                    }
+                    finalValue = $.trim(cur);
+                    if ( curValue !== finalValue ) {
+                        el.setAttribute(&#39;class&#39;, finalValue);
+                    }
+                }
+            }
+        }
+    }
+
+    return this;
+}
+
+$.fn.addClass = addClass;</code></pre>
+<p>值得一提的就是在实例方法中，<code>this</code> 关键字可以访问到根据选择器所查询到的所有元素的集合，在这里是通过 <code>while</code> 循环来对每个元素进行操作。要实现类似 <code>$(selector).addClass().removeClass()</code> 这样的链式操作，只需要在每个实例方法中返回一个 <code>this</code> 即可。要实现其他实例方法比如 <code>hasClass()</code> 之类的也是类似的方法。</p>
+<p>其实每个实例方法都是通过 <code>this</code> 关键字来获取查询到的元素，然后遍历这些元素来针对每个元素进行具体的操作，在举一个栗子：</p>
+<pre><code class="js">function append(DOMString) {
+    let el, i = 0,
+        fregmentCollection = $.parseHTML(DOMString),
+        fregments = Array.prototype.slice.apply(fregmentCollection);
+
+    while((el = this[i++])) {
+        fregments.map(fregment =&gt; {
+            el.appendChild(fregment);
+        });
+    }
+
+    return this;
+}
+
+$.fn.append = append;</code></pre>
+<p>上面是 <code>append()</code> 的实现，首先先解析 <code>DOMString</code> 为 <code>fregment</code>，然后就是遍历查询到的元素（通过 <code>this</code> 关键字）并针对每个元素去进行 <code>appendChild()</code> 的操作，从而把 <code>DOM</code> 插入到匹配到的所有元素中。</p>
+<p>其他实例方法也是通过类似的方式实现的，这里就不一一细说了，想更详细的查看其他方法的实现可以直接到 <a href="https://github.com/JustClear/clus" target="_blank" rel="noopener">Clus</a> 中查看源码。</p>
+
+            </section>
+            <footer class="article-meta">
+                
+                    <div class="follow">
+                        <img src="/images/follow.png" alt="前端小专栏">
+                        <p class="description">更多干货请关注公众号 <span>前端小专栏</span></p>
+                    </div>
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

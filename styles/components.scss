@@ -1,0 +1,162 @@
+.Header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.Nav {
+    position: relative;
+
+    .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: $nav-height;
+    }
+
+    .Logo {
+        width: $logo-size;
+        background: #fafcfb;
+        border-radius: calc($logo-size / 2);
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .menu {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        float: right;
+        height: $nav-height;
+        line-height: $nav-height;
+
+        li {
+            display: inline-block;
+            margin-left: 20px;
+        }
+
+        a {
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 750px) {
+            display: none;
+        }
+    }
+
+    .icon-menu {
+        $size: 40px;
+        width: $size;
+        height: $size;
+        background-image: url('../images/menu.svg');;
+        background-position: center;
+        background-size: cover;
+        cursor: pointer;
+
+        @media screen and (min-width: 750px) {
+            display: none;
+        }
+    }
+}
+
+.menu-mobile {
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s;
+    z-index: 9;
+    text-align: center;
+    padding-top: 50px;
+    margin: 0;
+
+    li {
+        margin: 30px 0;
+    }
+
+    &.visible {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .3s;
+    }
+
+    @media screen and (min-width: 750px) {
+        display: none;
+    }
+}
+
+.Pagination {
+    margin-top: 20px;
+    padding: 10px 0;
+
+    .page-prev,
+    .page-next {
+        display: block;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 10px;
+        font-size: 24px;
+        text-align: center;
+        box-shadow: 0 0 2px #aaa;
+    }
+
+    .page-prev {
+        float: left;
+    }
+
+    .page-next {
+        float: right;
+    }
+}
+
+.Footer {
+    padding: 100px 0;
+
+    .copyright {
+        color: #333;
+        font-weight: bold;
+        letter-spacing: 6px;
+    }
+}
+
+.Avatar {
+    $size: 200px;
+    width: $size;
+    height: $size;
+    border-radius: calc($size / 2);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: transform .3s;
+    margin: 30px 0;
+    
+    &:hover {
+        box-shadow: 0px 0px 30px rgba(230, 230, 230, 1);
+        transition: transform .3s;
+        transform: scale(1.05);
+    }
+}
+
+.About {
+    .bio {
+        text-align: center;
+    }
+
+    .avatar-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

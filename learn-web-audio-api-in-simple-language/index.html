@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            深入浅出 Web Audio Api - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">深入浅出 Web Audio Api</h1>
+                
+            </header>
+            <section class="article-content">
+                 <h2 id="什么是-Web-Audio-Api"><a href="#什么是-Web-Audio-Api" class="headerlink" title="什么是 Web Audio Api"></a>什么是 Web Audio Api</h2><p>首先引用一下 <a href="https://developer.mozilla.org/en/docs/Web/API/Web_Audio_API" target="_blank" rel="noopener">MDN</a> 上对 Web Audio Api 的一段描述：</p>
+<blockquote>
+<p>The Web Audio API involves handling audio operations inside an audio context, and has been designed to allow modular routing. Basic audio operations are performed with audio nodes, which are linked together to form an audio routing graph.</p>
+</blockquote>
+<p>大致的意思就是 Web Audio API 需要在音频上下文中处理音频的操作，并具有模块化路由的特点。基本的音频操作是通过音频节点来执行的，这些音频节点被连接在一起形成音频路由图。</p>
+<p>我们可以从上面这段文字中提取出几个关键词：</p>
+<ul>
+<li><strong>音频上下文</strong></li>
+<li><strong>音频节点</strong></li>
+<li><strong>模块化</strong></li>
+<li><strong>音频图</strong></li>
+</ul>
+<p>我将会以这些关键词为开始，慢慢介绍什么是 Web Audio Api，如何使用 Web Audio Api 来处理音频等等。</p>
+<h3 id="音频上下文-AudioContext"><a href="#音频上下文-AudioContext" class="headerlink" title="音频上下文(AudioContext)"></a>音频上下文(<code>AudioContext</code>)</h3><p>音频中的 <code>AudioContext</code> 可以类比于 <code>canvas</code> 中的 <code>context</code>，其中包含了一系列用来处理音频的 <code>API</code>，简而言之，就是可以用来控制音频的各种行为，比如播放、暂停、音量大小等等等等。创建音频的 <code>context</code> 比创建 <code>canvas</code> 的 <code>context</code> 简单多了（考虑代码的简洁性，下面代码都不考虑浏览器的兼容情况）：</p>
+<pre><code class="js">const audioContext = new AudioContext();</code></pre>
+<p>在继续了解 <code>AudioContext</code> 之前，我们先来回顾一下，平时我们是如何播放音频的：</p>
+<pre><code class="html">&lt;audio autoplay src=&quot;path/to/music.mp3&quot;&gt;&lt;/audio&gt;</code></pre>
+<p>或者：</p>
+<pre><code class="js">const audio = new Audio();
+audio.autoplay = true;
+audio.src = &#39;path/to/music.mp3&#39;;</code></pre>
+<p>没错，非常简单的几行代码就实现了音频的播放，但是这种方式播放的音频，只能控制播放、暂停等等一些简单的操作。但是如果我们想要控制音频更「高级」的属性呢，比如声道的合并与分割、混响、音调、声相控制和音频振幅压缩等等，可以做到吗？答案当然是肯定的，一切都基于 <code>AudioContext</code>。我们以最简单的栗子来了解一下 <code>AudioContext</code> 的用法：</p>
+<pre><code class="js">const URL = &#39;path/to/music.mp3&#39;;
+const audioContext = new AudioContext();
+const playAudio = function (buffer) {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContext.destination);
+    source.start();
+};
+const getBuffer = function (url) {
+    const request = new XMLHttpRequest();
+    return new Promise((resolve, reject) =&gt; {
+        request.open(&#39;GET&#39;, url, true);
+        request.responseType = &#39;arraybuffer&#39;;
+        request.onload = () =&gt; {
+            audioContext.decodeAudioData(request.response, buffer =&gt; buffer ? resolve(buffer) : reject(&#39;decoding error&#39;));
+        };
+        request.onerror = error =&gt; reject(error);
+        request.send();
+    });
+};
+const buffer = await getBuffer(URL);
+buffer &amp;&amp; playAudio(buffer);</code></pre>
+<p>别方，这个栗子真的是最简单的栗子了（尽量写得简短易懂了），其实仔细看下，代码无非就做了三件事：</p>
+<ul>
+<li>通过 <code>ajax</code> 把音频数据请求下来；</li>
+<li>通过 <code>audioContext.decodeAudioData()</code> 方法把音频数据转换成我们所需要的 <code>buffer</code> 格式；</li>
+<li>通过 <code>playAudio()</code> 方法把音频播放出来。</li>
+</ul>
+<p>你没猜错，达到效果和刚刚提到的播放音频的方式一毛一样。这里需要重点讲一下 <code>playAudio</code> 这个函数，我提取出了三个关键点：</p>
+<ul>
+<li><code>source</code></li>
+<li><code>connect</code></li>
+<li><code>destination</code></li>
+</ul>
+<p>你可以试着以这种方式来理解这三个关键点：首先我们通过 <code>audioContext.createBufferSource()</code> 方法创建了一个「容器」 <code>source</code> 并装入接收进来的「水」 <code>buffer</code>；其次通过「管道」 <code>connect</code> 把它和「出口」 <code>destination</code> 连接起来；最终「出口」 <code>destination</code> 「流」出来的就是我们所听到的音频了。不知道这么讲，大家有没有比较好理解。</p>
+<p><img src="/images/posts/learn-web-audio-api-in-simple-language/audio-context.png" alt="AudioContext"></p>
+<p>或者也可以拿 webpack 的配置文件来类比：</p>
+<pre><code class="js">module.exports = {
+    // source.buffer
+    entry: &#39;main.js&#39;,
+    // destination
+    output: {
+        filename: &#39;app.js&#39;,
+        path: &#39;/path/to/dist&#39;,
+    },
+};</code></pre>
+<p><code>source</code> 和 <code>destination</code> 分别相当于配置中的入口文件和输出文件，而 <code>connect</code> 相当于 webpack 内置的默认 <code>loader</code>，负责把源代码 <code>buffer</code> 生成到输出文件中。</p>
+<p><strong>重点理解这三个关键点的关系</strong>。</p>
+<p><strong>注意：<code>Audio</code> 和 Web Audio 是不一样的，它们之间的关系大概像这样：</strong></p>
+<p><img src="/images/posts/learn-web-audio-api-in-simple-language/audio-and-web-audio.png" alt="Web audio API and Audio"></p>
+<p><strong><code>Audio</code>:</strong></p>
+<ul>
+<li>简单的音频播放器；</li>
+<li>「单线程」的音频；</li>
+</ul>
+<p><strong>Web Audio:</strong></p>
+<ul>
+<li>音频合成；</li>
+<li>可以做音频的各种处理；</li>
+<li>游戏或可交互应用中的环绕音效；</li>
+<li>可视化音频等等等等。</li>
+</ul>
+<h3 id="音频节点-AudioNode"><a href="#音频节点-AudioNode" class="headerlink" title="音频节点(AudioNode)"></a>音频节点(<code>AudioNode</code>)</h3><p>到这里，大家应该大致知道了如何通过 <code>AudioContext</code> 去控制音频的播放。但是会发现写了这么一大堆做的事情和前面提到的一行代码的所做的事情没什么区别（<code>&lt;audio autoplay src=&quot;path/to/music.mp3&quot;&gt;&lt;/audio&gt;</code>），那么 <code>AudioContext</code> 具体是如何去处理我们前面所提到的那些「高级」的功能呢？就是我们接下来正要了解的 <strong>音频节点</strong>。</p>
+<p>那么什么是音频节点呢？可以把它理解为是通过「管道」 <code>connect</code> 连接在「容器」<code>source</code> 和「出口」 <code>destination</code> 之间一系列的音频「处理器」。<code>AudioContext</code> 提供了许多「处理器」用来处理音频，比如音量「处理器」 <code>GainNode</code>、延时「处理器」 <code>DelayNode</code> 或声道合并「处理器」 <code>ChannelMergerNode</code> 等等。</p>
+<p>前面所提到的「管道」 <code>connect</code> 也是由音频节点 <code>AudioNode</code> 提供的，所以你猜的没错，「容器」 <code>source</code> 也是一种音频节点。</p>
+<pre><code class="js">const source = audioContext.createBufferSource();
+console.log(source instanceof AudioNode); // true</code></pre>
+<p><code>AudioNode</code> 还提供了一系列的方法和属性：</p>
+<ul>
+<li><code>.context</code> (read only): <code>audioContext</code> 的引用</li>
+<li><code>.channelCount</code>: 声道数</li>
+<li><code>.connect()</code>: 连接另外一个音频节点</li>
+<li><code>.start()</code>: 开始播放</li>
+<li><code>.stop()</code>: 停止播放</li>
+</ul>
+<p>更多详细介绍可访问 MDN <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioNode" target="_blank" rel="noopener">文档</a>。</p>
+<h4 id="GainNode"><a href="#GainNode" class="headerlink" title="GainNode"></a>GainNode</h4><p><img src="/images/posts/learn-web-audio-api-in-simple-language/gain-node.png" alt="GainNode"></p>
+<p>前面有提到音频处理是通过一个个「处理器」来处理的，那么在实际应用中怎么把我们想要的「处理器」装上去呢？</p>
+<p>Don’t BB, show me the code:</p>
+<pre><code class="js">const source = audioContext.createBufferSource();
+const gainNode = audioContext.createGain();
+const buffer = await getBuffer(URL);
+
+source.buffer = buffer;
+source.connect(gainNode);
+gainNode.connect(source.destination);
+
+const updateVolume = volume =&gt; gainNode.gain.value = volume;</code></pre>
+<p>可以发现和上面提到的 <code>playAudio</code> 方法很像，区别只是 <code>source</code> 不直接 connect 到 <code>source.destination</code>，而是先 connect 到 <code>gainNode</code>，然后再通过 <code>gainNode</code> connect 到 <code>source.destination</code>。这样其实就把「音量处理器」装载上去了，此时我们通过更新 <code>gainNode.gain.value</code> 的值（<code>0 - 1</code> 之间）就可以控制音量的大小了。</p>
+<p><a href="https://justclear.github.io/web-audio-examples/gain-node.html">Full Demo</a></p>
+<h4 id="BiquadFilterNode-waiting-for-perfection"><a href="#BiquadFilterNode-waiting-for-perfection" class="headerlink" title="BiquadFilterNode(waiting for perfection)"></a>BiquadFilterNode(waiting for perfection)</h4><p><img src="/images/posts/learn-web-audio-api-in-simple-language/biquad-filter-node.png" alt="BiquadFilterNode"></p>
+<p>不知道怎么翻译这个「处理器」，暂且叫做低阶滤波器吧，简单来说它就是一个通过过滤音频的数字信号进而达到控制 <strong>音调</strong> 的音频节点。把它装上：</p>
+<pre><code class="js">const filterNode = audioContext.createBiquadFilter();
+// ...
+source.connect(filterNode);
+filterNode.connect(source.destination);
+
+const updateFrequency = frequency =&gt; filterNode.frequency.value = frequency;</code></pre>
+<p>这样一来我们就可以通过 <code>updateFrequency()</code> 方法来控制音频的音调（频率）了。当然，除了 <code>frequency</code> 我们还可以调整的属性还有（<a href="https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode" target="_blank" rel="noopener">MDN Docs</a>）：</p>
+<ul>
+<li><code>.Q</code>: quality factor;</li>
+<li><code>.type</code>: lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass;</li>
+<li><code>.detune</code>: detuning of the frequency in cents.</li>
+</ul>
+<p><a href="https://justclear.github.io/web-audio-examples/biquad-filter-node.html">Full Demo</a></p>
+<h4 id="PannerNode"><a href="#PannerNode" class="headerlink" title="PannerNode"></a>PannerNode</h4><p>我们可以调用 <strong>PannerNode</strong> 的 <code>.setPosition()</code> 方法来做出非常有意思的 3D 环绕音效：</p>
+<pre><code class="html">&lt;input type=&quot;range&quot; name=&quot;rangeX&quot; value=&quot;0&quot; max=&quot;10&quot; min=&quot;-10&quot;&gt;</code></pre>
+<pre><code class="js">const rangeX = document.querySelector(&#39;input[name=&quot;rangeX&quot;]&#39;);
+const source = audioContext.createBufferSource();
+const pannerNode = audioContext.createPanner();
+
+source.connect(pannerNode);
+pannerNode.connect(source.destination);
+
+rangeX.addEventListener(&#39;input&#39;, () =&gt; pannerNode.setPosition(rangeX.value, 0, 0));</code></pre>
+<p>还是老方法「装上」 <code>PannerNode</code> 「处理器」，然后通过监听 <code>range</code> 控件的 <code>input</code> 事件，通过 <code>.setPosition()</code> 方法更新 <strong>声源相对于听音者的位置</strong>，这里我只简单的更新了声源相对于听音者的 <code>X</code> 方向上的距离，当值为负值时，声音在左边，反之则在右边。</p>
+<p>你可以这么去理解 <code>PannerNode</code>，它把你（听音者）置身于一个四面八方都非常空旷安静的空间中，其中还有一个音响（声源），而 <code>.setPosition()</code> 方法就是用来控制 <strong>音响</strong> 在空间中 <strong>相对于你（听音者）</strong> 的位置的，所以上面这段代码可以控制声源在你左右俩耳边来回晃动（带上耳机）。</p>
+<p><a href="https://justclear.github.io/web-audio-examples/panner-node.html">Full Demo</a></p>
+<p>当然，对于 <code>PannerNode</code> 来说，还有许多属性可以使得 3D 环绕音效听上去更逼真，比如：</p>
+<ul>
+<li><code>.distanceModel</code>: 控制音量变化的方式，有 3 种可能的值：<code>linear</code>, <code>inverse</code> 和 <code>exponential</code>；</li>
+<li><code>.maxDistance</code>: 表示 <strong>声源</strong> 和 <strong>听音者</strong> 之间的最大距离，超出这个距离后，听音者将不再能听到声音；</li>
+<li><code>.rolloffFactor</code>: 表示当 <strong>声源</strong> 远离 <strong>听音者</strong> 的时候，音量以多快的速率减小；</li>
+</ul>
+<p>这里只列举了常用的几个，如果想进一步了解 <code>PannerNode</code> 能做什么的话，可以查阅 MDN 上的 <a href="https://developer.mozilla.org/en-US/docs/Web/API/PannerNode" target="_blank" rel="noopener">文档</a>。</p>
+<h4 id="多个音频源"><a href="#多个音频源" class="headerlink" title="多个音频源"></a>多个音频源</h4><p>前面有提到过，在 <code>AudioContext</code> 中可以同时使用多个「处理器」去处理一个音频源，那么多个音频源 <code>source</code> 可以同时输出吗？答案当然也是肯定的，在 <code>AudioContext</code> 中可以有多个音频处理通道，它们之间互不影响：</p>
+<p><img src="/images/posts/learn-web-audio-api-in-simple-language/cross-fading.png" alt="cross fading"></p>
+<pre><code class="js">const sourceOne = audioContext.createBufferSource();
+const sourceTwo = audioContext.createBufferSource();
+const gainNodeOne = audioContext.createGain();
+const gainNodeTwo = audioContext.createGain();
+
+sourceOne.connect(gainNodeOne);
+sourceTwo.connect(gainNodeTwo);
+gainNodeOne.connect(audioContext.destination);
+gainNodeTwo.connect(audioContext.destination);</code></pre>
+<p><a href="https://justclear.github.io/web-audio-examples/cross-fading.html">Full Demo</a></p>
+<h3 id="模块化-Modular"><a href="#模块化-Modular" class="headerlink" title="模块化(Modular)"></a>模块化(<code>Modular</code>)</h3><p><img src="/images/posts/learn-web-audio-api-in-simple-language/modular.png" alt="Modular"></p>
+<p>通过前面 <strong>音频节点</strong> 的介绍，相信你们已经感受到了 Web Audio 的模块化设计了，它提供了一种非常方便的方式来为音频装上(<code>connect</code>)不同的「处理器」 <code>AudioNode</code>。不仅一个音频源可以使用多个「处理器」，而多个音频源也可以合并为一个「输出」 <code>destination</code>。</p>
+<p>得益于 Web Audio 的模块化设计，除了上面提到的模块（<code>AudioNode</code>），它还提供了非常多的可配置的、高阶的、开箱即用的模块。所以通过使用这些模块，我们完全可以创建出功能丰富的音频处理应用。</p>
+<p>如果你对 <code>AudioContext</code> 和 <code>AudioNode</code> 之间的关系还没有一个比较清晰的概念的话，就和前面一开始所说的那样，把它们和 webpack 和 <code>loader</code> 做类比，<code>AudioContext</code> 和 webpack 相当于一个「环境」，模块（<code>AudioNode</code> 或 <code>loader</code>）可以很方便在「环境」中处理数据源（<code>AudioContext</code> 中的 <code>buffer</code> 或 webpack 中的 <code>js</code>, <code>css</code>, <code>image</code> 等静态资源），对比如下：</p>
+<pre><code class="js">module.exports = {
+    entry: {
+        // 多音频源合并为一个输出
+        app: [&#39;main.js&#39;], // source.buffer
+        vender: [&#39;vender&#39;], // source.buffer
+    },
+    output: { // source.destination
+        filename: &#39;app.js&#39;,
+        path: &#39;/path/to/dist&#39;,
+    },
+    // AudioNode
+    module: {
+        rules: [{
+            // source.buffer
+            test: /\.(scss|css)$/,
+            // AudioNode: GainNode, BiquadFilterNode, PannerNode ...
+            use: [&#39;style-loader&#39;, &#39;css-loader&#39;, &#39;sass-loader&#39;],
+        }],
+    },
+};</code></pre>
+<p>再次发现，Web Audio Api 和 webpack 的设计理念如此的相似。</p>
+<h3 id="音频图-Audio-Graph"><a href="#音频图-Audio-Graph" class="headerlink" title="音频图(Audio Graph)"></a>音频图(<code>Audio Graph</code>)</h3><p><img src="/images/posts/learn-web-audio-api-in-simple-language/audio-graph.png" alt="Audio Graph"></p>
+<blockquote>
+<p>An audio graph is a set of interconnected audio nodes.</p>
+</blockquote>
+<p>现在我们知道了，音频的处理都是通过 <strong>音频节点</strong> 来处理的，而多个音频节点 <code>connect</code> 到一起就形成了 <strong>音频导向图（Audio Routing Graph）</strong>，简而言之就是多个相互连接在一起的音频节点。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文展示的仅仅只是 Web Audio 众多 API 中的冰山一角，如果想更深入了解 Web Audio 的话，建议可以去查阅相关文档。尽管如此，利用上面介绍的一些 API 也足够做出一些有意思的音乐效果来了。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://developer.mozilla.org/en/docs/Web/API/Web_Audio_API" target="_blank" rel="noopener">Web Audio Api - MDN</a></li>
+<li><a href="https://www.html5rocks.com/en/tutorials/webaudio/intro/" target="_blank" rel="noopener">Getting Started with Web Audio API</a></li>
+</ol>
+
+            </section>
+            <footer class="article-meta">
+                
+                    <div class="follow">
+                        <img src="/images/follow.png" alt="前端小专栏">
+                        <p class="description">更多干货请关注公众号 <span>前端小专栏</span></p>
+                    </div>
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

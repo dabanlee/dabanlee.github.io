@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            Swift 中无法滑动返回的解决方案 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">Swift 中无法滑动返回的解决方案</h1>
+                
+            </header>
+            <section class="article-content">
+                 <p>通常使用导航控制器 <code>navigationController</code> 跳转到另一页面时，除了可以点击左上角的返回按钮，还可以通过在屏幕左侧向右滑动来返回到上一层。但如果自定义了 <code>self.navigationItem.leftBarButtonItems</code> 后会发现，滑动返回（swipe back）失效了。</p>
+<h2 id="让滑动返回继续有效"><a href="#让滑动返回继续有效" class="headerlink" title="让滑动返回继续有效"></a>让滑动返回继续有效</h2><ol>
+<li>解决办法是让 <code>ViewController</code> 实现 <code>UIGestureRecognizerDelegate</code> 协议。</li>
+<li>当这样做还不够，虽然滑动返回功能又恢复了，但这时还会出现另一个问题：即在一级视图（根视图）中，我们用手势滑动一下，然后进入二级视图，会发现画面卡住死在那里了。</li>
+</ol>
+<pre><code class="swift">import UIKit
+
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // 启用滑动返回
+        self.navigationController?.interactivePopGestureRecognizer!.delegate = self
+    }
+
+    // 是否允许手势
+    func swipeBack(_ gestureRecognizer: UIGestureRecognizer) -&gt; Bool {
+        if (gestureRecognizer == self.navigationController?.interactivePopGestureRecognizer) {
+            // 只有二级以及以下的页面允许手势返回
+            return self.navigationController!.viewControllers.count &gt; 1
+        }
+        return true
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+}</code></pre>
+<h2 id="与-webview-手势冲突造成无法滑动返回"><a href="#与-webview-手势冲突造成无法滑动返回" class="headerlink" title="与 webview 手势冲突造成无法滑动返回"></a>与 <code>webview</code> 手势冲突造成无法滑动返回</h2><blockquote>
+<p><code>webview</code> 如果没加载页面则没有这个问题</p>
+</blockquote>
+<p>正常情况下通过上面的设置后就可以滑动返回了，但有时我们在页面内放置了一个 <code>webview</code> 并加载网页进来后，会发现滑动返回的功能又失效了。</p>
+<p><strong>问题原因</strong>：由于 <code>webview</code> 加载的这个页面自身内部需要用到手势操作，或者 <code>webview</code> 放大之后需要一些滑动查看操作，于是便造成事件冲突。</p>
+<p><strong>解决办法</strong>：新建了一个 tap手势，设置代理，同时实现允许多个手势并发的代理方法</p>
+<pre><code class="swift">import UIKit
+
+class ViewController: UIViewController, UIGestureRecognizerDelegate {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // 启用滑动返回
+        self.navigationController?.interactivePopGestureRecognizer!.delegate = self
+
+        // 新建一个滑动手势
+        let tap = UISwipeGestureRecognizer(target:self, action:nil)
+        tap.delegate = self
+        self.webView.addGestureRecognizer(tap)
+    }
+
+    //返回 true 表示所有相同类型的手势辨认都会得到处理
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -&gt; Bool {
+        return true
+    }
+
+    // 是否允许手势
+    func swipeBack(_ gestureRecognizer: UIGestureRecognizer) -&gt; Bool {
+        if (gestureRecognizer == self.navigationController?.interactivePopGestureRecognizer) {
+            // 只有二级以及以下的页面允许手势返回
+            return self.navigationController!.viewControllers.count &gt; 1
+        }
+        return true
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+}</code></pre>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://www.hangge.com/blog/cache/detail_1092.html" target="_blank" rel="noopener">自定义导航栏leftBarButtonItems导致滑动返回失效问题解决</a></li>
+</ol>
+
+            </section>
+            <footer class="article-meta">
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+

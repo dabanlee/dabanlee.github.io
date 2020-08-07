@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        
+            如何用 React 做服务端渲染 - 大板栗想写点东西
+        
+    </title>
+    <meta name="keywords" content>
+    <meta name="description" content>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/dist/css/github-gist.css">
+    <link rel="stylesheet" href="/dist/css/app.css">
+</head>
+
+
+<body data-page="article">
+
+</body></html>
+<header class="Header">
+    <nav class="Nav">
+        <div class="container">
+            <div class="Logo">
+                <a href="https://justclear.github.io">
+                    <img src="/images/logo.jpg" alt="大板栗想写点东西">
+                </a>
+            </div>
+            <ul class="menu">
+                
+                <li><a href="/">HOME</a></li>
+                
+                <li><a href="/idea">IDEA</a></li>
+                
+                <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+                
+                <li><a href="/about/">ABOUT</a></li>
+                
+                <li><a href="https://github.com/justclear">GITHUB</a></li>
+                
+            </ul>
+            <div class="icon-menu js-icon-menu"></div>
+        </div>
+    </nav>
+</header>
+<ul class="menu-mobile js-menu-mobile">
+    
+    <li><a href="/">HOME</a></li>
+    
+    <li><a href="/idea">IDEA</a></li>
+    
+    <li><a href="https://unsplash.com/@dabanli">PHOTOGRAPHY</a></li>
+    
+    <li><a href="/about/">ABOUT</a></li>
+    
+    <li><a href="https://github.com/justclear">GITHUB</a></li>
+    
+</ul>
+
+
+<div class="page-content">
+    <div class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">如何用 React 做服务端渲染</h1>
+                
+            </header>
+            <section class="article-content">
+                 <blockquote>
+<p>Photo by <a href="https://unsplash.com/@stage7photography" target="_blank" rel="noopener">Stage 7 Photography</a></p>
+</blockquote>
+<p>服务端渲染的一些优缺点这里就不说了，相信大家都已经非常清楚地知道了，本文意在讲述如何将一个简单的浏览器端渲染的 <code>React SPA</code> 循序渐进地升级为支持服务端渲染。</p>
+<h2 id="初始化一个普通的单页应用（浏览器端渲染）"><a href="#初始化一个普通的单页应用（浏览器端渲染）" class="headerlink" title="初始化一个普通的单页应用（浏览器端渲染）"></a>初始化一个普通的单页应用（浏览器端渲染）</h2><p>在搭建服务端渲染应用之前我们现在搭建一个基于浏览器端渲染的单页应用，该单页应用包含简单的路由功能。</p>
+<pre><code class="sh">mkdir react-ssr
+cd react-ssr
+yarn init</code></pre>
+<p>依赖安装：</p>
+<pre><code class="sh">yarn add react react-dom react-router-dom</code></pre>
+<p>首先创建 App 的入口文件 <code>src/App.jsx</code>：</p>
+<pre><code class="js">import React from &#39;React&#39;;
+import { Switch, Route, Link } from &#39;react-router-dom&#39;;
+
+import Home from &#39;./pages/Home&#39;;
+import Post from &#39;./pages/Post&#39;;
+
+export default () =&gt; (
+    &lt;div&gt;
+        &lt;Switch&gt;
+            &lt;Route exact path=&quot;/&quot; component={ Home } /&gt;
+            &lt;Route exact path=&quot;/post&quot; component={ Post } /&gt;
+        &lt;/Switch&gt;
+    &lt;/div&gt;
+)</code></pre>
+<p>其次创建两个页面组件 <code>src/pages/Home.jsx</code> 和 <code>src/pages/Post.jsx</code>：</p>
+<pre><code class="js">// Home.jsx
+import React from &#39;react&#39;;
+import { Link } from &#39;react-router-dom&#39;;
+
+export default () =&gt; (
+    &lt;div&gt;
+        &lt;h1&gt;Page Home.&lt;/h1&gt;
+        &lt;Link to=&quot;/post&quot;&gt;Link to Post&lt;/Link&gt;
+    &lt;/div&gt;
+);
+
+// Post.jsx
+import React, { Component } from &#39;react&#39;;
+import { Link } from &#39;react-router-dom&#39;;
+
+export default class Post extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            post: {},
+        };
+    }
+    componentDidMount() {
+        setTimeout(() =&gt; this.setState({
+            post: {
+                title: &#39;This is title.&#39;,
+                content: &#39;This is content.&#39;,
+                author: &#39;大板栗.&#39;,
+                url: &#39;https://github.com/justclear&#39;,
+            },
+        }), 2000);
+    }
+    render() {
+        const post = this.state.post;
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;Page Post&lt;/h1&gt;
+                &lt;Link to=&quot;/&quot;&gt;Link to Home&lt;/Link&gt;
+                &lt;h2&gt;{ post.title }&lt;/h2&gt;
+                &lt;p&gt;By: { post.by }&lt;/p&gt;
+                &lt;p&gt;Link: &lt;a href={post.url} target=&quot;_blank&quot;&gt;{post.url}&lt;/a&gt;&lt;/p&gt;
+            &lt;/div&gt;
+        );
+    }
+};</code></pre>
+<p>然后创建 <code>webpack</code> 的入口文件 <code>src/index.jsx</code>：</p>
+<pre><code class="js">import React from &#39;react&#39;;
+import ReactDOM from &#39;react-dom&#39;;
+import { BrowserRouter } from &#39;react-router-dom&#39;;
+import App from &#39;./App&#39;;
+
+ReactDOM.render(
+    &lt;BrowserRouter&gt;
+        &lt;App&gt;&lt;/App&gt;
+    &lt;/BrowserRouter&gt;
+    , document.getElementById(&#39;root&#39;));</code></pre>
+<p><code>package.json</code>：</p>
+<pre><code class="json">{
+    &quot;scripts&quot;: {
+        &quot;build:client&quot;: &quot;NODE_ENV=development webpack -w&quot;,
+    },
+}</code></pre>
+<p>到此，一个最简单的基于 React 带路由跳转的单页应用就完成了，下面是效果：</p>
+<p><img src="/images/posts/react-server-side-rendering/react-csr.gif" alt="React-Client-Side-Rendering"></p>
+<h2 id="加入服务端渲染功能"><a href="#加入服务端渲染功能" class="headerlink" title="加入服务端渲染功能"></a>加入服务端渲染功能</h2><p>顾名思义，要加入服务端渲染功能，就必须要有一个服务器，为了方便起见，这里就以 <code>express</code> 框架为例（当然你也可以使用 <a href="https://github.com/koajs/koa" target="_blank" rel="noopener"><code>koa</code></a>, <a href="https://github.com/fastify/fastify" target="_blank" rel="noopener"><code>fastify</code></a>, <a href="https://github.com/restify/node-restify" target="_blank" rel="noopener"><code>restify</code></a> 等等你所有熟悉的框架）：</p>
+<pre><code class="sh">yarn add express</code></pre>
+<p>首先创建服务端代码的入口文件 <code>server/index.js</code>：</p>
+<pre><code class="js">import fs from &#39;fs&#39;;
+import path from &#39;path&#39;;
+import express from &#39;express&#39;;
+
+import React from &#39;react&#39;;
+import { StaticRouter } from &quot;react-router-dom&quot;;
+import { renderToString } from &#39;react-dom/server&#39;;
+import App from &#39;../src/App&#39;;
+
+const app = express();
+
+app.get(&#39;/*&#39;, (req, res) =&gt; {
+    const renderedString = renderToString(
+        &lt;StaticRouter&gt;
+            &lt;App&gt;&lt;/App&gt;
+        &lt;/StaticRouter&gt;
+    );
+
+    fs.readFile(path.resolve(&#39;index.html&#39;), &#39;utf8&#39;, (error, data) =&gt; {
+        if (error) {
+            res.send(`&lt;p&gt;Server Error&lt;/p&gt;`);
+            return false;
+        }
+
+        res.send(data.replace(&#39;&lt;div id=&quot;root&quot;&gt;&lt;/div&gt;&#39;, `&lt;div id=&quot;root&quot;&gt;${renderedString}&lt;/div&gt;`));
+    })
+});
+
+app.listen(3000);</code></pre>
+<p>其次配置打包服务端代码的 <code>webpack</code> 配置 <code>webpack.server.js</code>：</p>
+<pre><code class="js">const path = require(&#39;path&#39;);
+
+module.exports = {
+    mode: &#39;development&#39;,
+    entry: &#39;./server/index.js&#39;,
+    output: {
+        filename: &#39;app.js&#39;,
+        path: path.resolve(&#39;server/build&#39;),
+    },
+    target: &#39;node&#39;,
+    resolve: {
+        extensions: [&#39;.js&#39;, &#39;.jsx&#39;, &#39;.ts&#39;, &#39;.tsx&#39;, &#39;.json&#39;],
+    },
+    module: {
+        rules: [{
+            test: /\.jsx?$/,
+            use: &#39;babel-loader&#39;,
+            exclude: /node_modules/,
+        }],
+    },
+};</code></pre>
+<p><code>package.json</code>：</p>
+<pre><code class="json">{
+    &quot;scripts&quot;: {
+        &quot;build:server&quot;: &quot;NODE_ENV=development webpack -w --config webpack.server.js&quot;,
+        &quot;start&quot;: &quot;nodemon server/build/app.js&quot;
+      },
+}</code></pre>
+<blockquote>
+<p>注：如果使用服务端渲染的话，文档建议需要把 <code>src/index.jsx</code> 中的 <code>ReactDOM.render</code> 换成 <code>ReactDOM.hydrate</code>，因为下个主版本 <code>ReactDOM.render</code> 将不再支持服务端渲染。</p>
+</blockquote>
+<blockquote>
+<p><a href="https://reactjs.org/docs/react-dom.html" target="_blank" rel="noopener">react-dom docs</a>: Using ReactDOM.render() to hydrate a server-rendered container is deprecated and will be removed in React 17. Use hydrate() instead.</p>
+</blockquote>
+<p>最后 <code>npm start</code> 后会看到如下页面：</p>
+<p><img src="/images/posts/react-server-side-rendering/react-ssr-0.jpg" alt="React-Server-Side-Rendering"></p>
+<p>咋一看和浏览器端渲染的结果一样，但是如果我们分别查看两个页面的源代码的话，就会发现区别：</p>
+<p><img src="/images/posts/react-server-side-rendering/react-csr.jpg" alt="React-Client-Side-Rendering-Source"><br><img src="/images/posts/react-server-side-rendering/react-ssr-1.jpg" alt="React-Server-Side-Rendering-Source"></p>
+<p>会很明显的发现第二张服务器端渲染的页面源代码中的 <code>&lt;div id=&quot;root&quot;&gt;&lt;/div&gt;</code> 中多了一些代码，仔细观察的话会发现其实就是 <code>Home.jsx</code> 所渲染的代码。</p>
+<p>至此，我们已经实现了 <code>React</code> 服务端渲染的功能了。</p>
+<p>不过此时如果你点击页面中的 <strong>Link to Post</strong> 链接的话，会发现路由跳转 <code>/post</code> 后渲染的还是 <code>Home.jsx</code> 的内容，这是因为我们没有在服务端中做对应的 <strong>路由匹配</strong>。</p>
+<h2 id="服务端匹配路由"><a href="#服务端匹配路由" class="headerlink" title="服务端匹配路由"></a>服务端匹配路由</h2><p><code>react-router-dom</code> 路由模块提供一个 <code>matchPath</code> 方法来匹配路由。</p>
+<p>在匹配路由之前我们先来做一件事，就是把路由抽离成 <code>src/routes.js</code>：</p>
+<pre><code class="js">// routes.js
+import Home from &#39;./pages/Home&#39;;
+import Post from &#39;./pages/Post&#39;;
+
+export default [{
+    path: &#39;/&#39;,
+    exact: true,
+    component: Home
+}, {
+    path: &#39;/post&#39;,
+    exact: true,
+    component: Post,
+}];
+</code></pre>
+<p>然后在 <code>server/index.js</code> 中引入：</p>
+<pre><code class="js">// ...
+import { StaticRouter, matchPath } from &#39;react-router-dom&#39;;
+import routes from &#39;../src/routes&#39;;
+// ...
+
+app.get(&#39;/*&#39;, (req, res) =&gt; {
+    const currentRoute = routes.find(route =&gt; matchPath(req.url, route)) || {};
+    // ...
+    const renderedString = renderToString(
+        &lt;StaticRouter location={ req.url }&gt;
+            &lt;App&gt;&lt;/App&gt;
+        &lt;/StaticRouter&gt;
+    );
+});</code></pre>
+<p>通过数组的 <code>find</code> 方法配合 <code>matchPath</code> 方法匹配出当前路由的信息，然后在 <code>&lt;StaticRouter&gt;&lt;/StaticRouter&gt;</code> 组件中加上 <code>location</code> 的属性并传入当前的路由 <code>req.url</code>，此时如果重新点击页面中的 <strong>Link to Post</strong> 链接的话，<code>/post</code> 路由下的组件就能正常渲染了：</p>
+<p><img src="/images/posts/react-server-side-rendering/react-ssr-math-path.gif" alt="React-Server-Side-Rendering-Match-Path"></p>
+<p>此时你可能又会发现，跟之前的浏览器端渲染相比，跳转到 <code>Post</code> 页面后，并没有获取到 <code>componentDidMount</code> 中定义的异步数据，这是因为 <code>componentDidMount</code> 生命周期函数只会在浏览器环境下才会执行，所以服务端是不会执行该函数的，所以也就无法获取到数据了，这显然不是我们想要的结果。我们期望的样子是路由跳转后能和浏览器端渲染一样，可以正常获取这些异步数据。</p>
+<p>那我们如何在服务端中获取这些数据后再返回给浏览器呢？</p>
+<h2 id="服务端异步获取数据"><a href="#服务端异步获取数据" class="headerlink" title="服务端异步获取数据"></a>服务端异步获取数据</h2><p>新建一个 <code>src/helpers/fetchData.js</code> 辅助函数来获取数据：</p>
+<pre><code class="js">export default () =&gt; {
+    return new Promise((resolve) =&gt; {
+        setTimeout(() =&gt; resolve({
+            title: &#39;This is title.&#39;,
+            content: &#39;This is content.&#39;,
+            author: &#39;大板栗.&#39;,
+            url: &#39;https://github.com/justclear&#39;,
+        }), 2000);
+    })
+};</code></pre>
+<p>实现的思路是，在匹配路由的时候就判断当前路由所包含的组件是否需要加载数据，如果需要，则去加载：</p>
+<pre><code class="js">// ...
+app.get(&#39;/*&#39;, (req, res) =&gt; {
+    const currentRoute = routes.find(route =&gt; matchPath(req.url, route)) || {};
+    const promise = currentRoute.fetchData ? currentRoute.fetchData() : Promise.resolve(null);
+
+    promise.then(data =&gt; {
+        // data here...
+    }).catch(console.log);
+});</code></pre>
+<p>这里的逻辑就是判断 <code>src/routes.js</code> 中的路由对象中 <code>fetchData</code> 这个 <code>key</code> 是否有值，如果 <code>fetchData</code> 被三目运算判断为 <code>true</code>，则认为该路由需要获取数据，所以接下来我们要给 <code>path</code> 为 <code>/post</code> 的路由对象加上 <code>fetchData</code>，表示对应的 <code>Post</code> 组件需要异步获取数据：</p>
+<pre><code class="js">// src/routes.js
+import Home from &#39;./pages/Home&#39;;
+import Post from &#39;./pages/Post&#39;;
+
+import fetchData from &#39;./helpers/fetchData&#39;;
+
+export default [{
+    path: &#39;/&#39;,
+    exact: true,
+    component: Home
+}, {
+    path: &#39;/post&#39;,
+    exact: true,
+    component: Post,
+    fetchData,
+}];</code></pre>
+<p>此时当路由匹配到 <code>/post</code> 的时候，就会执行 <code>currentRoute.fetchData()</code> 这个 <code>promise</code>，获取到数据后就可以渲染 <code>Post</code> 组件了：</p>
+<pre><code class="js">promise.then(data =&gt; {
+    const context = {
+        data,
+    };
+    const renderedString = renderToString(
+        &lt;StaticRouter context={context} location={req.url}&gt;
+            &lt;App&gt;&lt;/App&gt;
+        &lt;/StaticRouter&gt;
+    );
+
+    res.send(template());
+
+    function template() {
+        return `
+            &lt;!DOCTYPE html&gt;
+            &lt;html lang=&quot;en&quot;&gt;
+            &lt;head&gt;
+                &lt;meta charset=&quot;UTF-8&quot;&gt;
+                &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+                &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+                &lt;title&gt;React Server Side Rendering&lt;/title&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                &lt;div id=&quot;root&quot;&gt;${renderedString}&lt;/div&gt;
+                &lt;script&gt;window.__ROUTE_DATA__ = ${JSON.stringify(data)}&lt;/script&gt;
+                &lt;script src=&quot;dist/app.js&quot;&gt;&lt;/script&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+
+        `;
+    }
+}).catch(console.log);</code></pre>
+<p>拿到数据 <code>data</code> 后应该传给 <code>&lt;StaticRouter&gt;&lt;/StaticRouter&gt;</code> 组件中的 <code>context</code> 属性中，这样就可以在组件自身的 <code>props.staticContext</code> 上获取到相应的数据，另外你还需要把 <code>JSON.stringify(data)</code> 赋值给 <code>window.__ROUTE_DATA__</code>，<code>__ROUTE_DATA__</code> 可以按你想要的方式命名，方便我们在组件内部通过判断 <code>window.__ROUTE_DATA__</code> 的值来采取不同的获取数据的策略。</p>
+<p>不过此时如果你点击 <strong>Link to Post</strong> 的话，你可能会发现页面打不开了：</p>
+<p><img src="/images/posts/react-server-side-rendering/react-ssr-error.gif" alt="React-Server-Side-Rendering-Error"></p>
+<p>这是因为请求 <code>/dist/app.js</code> 被当成了普通的路由了，没有被当成一个静态资源来返回有效的 <code>JavaScript</code> 代码，解决方案就是在 <code>server/index.js</code> 中加入一样代码：</p>
+<pre><code class="js">// ...
+const app = express();
+app.use(express.static(&#39;dist&#39;));
+// ...</code></pre>
+<p>然后把 <code>template</code> 函数中的 <code>&lt;script src=&quot;dist/app.js&quot;&gt;&lt;/script&gt;</code> 改成 <code>&lt;script src=&quot;/app.js&quot;&gt;&lt;/script&gt;</code>：</p>
+<p><img src="/images/posts/react-server-side-rendering/react-ssr-success.jpg" alt="React-Server-Side-Rendering-Success"></p>
+<p>现在 <code>/app.js</code> 可以正确地返回了 <code>JavaScript</code> 代码了。</p>
+<p>现在服务端已经把获取的 <code>data</code> 通过 <code>window.__ROUTE_DATA__ = JSON.stringify(data)</code> 的方式返回给浏览器端了，我们现在需要在 <code>Post.jsx</code> 组件内部来使用这个状态：</p>
+<pre><code class="js">// ...
+export default class Post extends Component {
+    constructor(props) {
+        super(props);
+        if (props.staticContext &amp;&amp; props.staticContext.data) {
+            this.state = {
+                post: props.staticContext.data
+            };
+        } else {
+            this.state = {
+                post: {},
+            };
+        }
+    }
+    componentDidMount() {
+        if (window.__ROUTE_DATA__) {
+            this.setState({
+                post: window.__ROUTE_DATA__,
+            });
+            delete window.__ROUTE_DATA__;
+        } else {
+            fetchData().then(data =&gt; {
+                this.setState({
+                    post: data,
+                });
+            })
+        }
+    }
+    // ...
+};</code></pre>
+<p><img src="/images/posts/react-server-side-rendering/react-ssr-final.gif" alt="React-Server-Side-Rendering-Final"></p>
+<p>你会发现当 <code>/post</code> 路由是由浏览器端打开的时候，组件会去判断 <code>window.__ROUTE_DATA__</code> 是否有值，此时会发现 <code>window.__ROUTE_DATA__</code> 为 <code>null</code>，所以会去执行 <code>fetchData</code> 来获取数据，所以你会看到进入 <code>/post</code> 后等待了 2 秒才显示数据。而直接刷新此页面的话，就无需等待，直接可看到结果。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>现在 <strong><code>React</code> 服务端渲染</strong> 支持算是基本完成了，当然这还远远不够，实际项目中运用的话肯定会复杂很多，比如通过 <a href="https://webpack.js.org/guides/code-splitting/#dynamic-imports" target="_blank" rel="noopener">Webpack Dynamic Imports</a> 和 <a href="https://github.com/jamiebuilds/react-loadable" target="_blank" rel="noopener">react-loadable</a> 等工具来优化代码以及如何配合 <code>Redux</code> 来使用等等等等。</p>
+<p>本文的目的是让一些对 <strong>React Server Side Rendering</strong> 技术还不太了解或者没什么概念的同学对服务端渲染有个初步的了解。</p>
+<p>如需查看完整的项目，请移步 <a href="https://github.com/JustClear/react-ssr" target="_blank" rel="noopener">Github</a>。</p>
+
+            </section>
+            <footer class="article-meta">
+                
+                    <div class="follow">
+                        <img src="/images/follow.png" alt="前端小专栏">
+                        <p class="description">更多干货请关注公众号 <span>前端小专栏</span></p>
+                    </div>
+                
+            </footer>
+        </article>
+    </div>
+</div>
+
+<footer class="Footer text-center">
+    <div class="container">
+        <section class="copyright">
+            <a href="https://justclear.github.io">大板栗</a>
+            <span>&copy; 2015 - 2019</span>
+        </section>
+    </div>
+</footer>
+
+    <script src="/dist/js/highlight.pack.js"></script>
+    <script src="/dist/js/app.js"></script>
+    <!-- <script type="text/javascript" src="https://s4.cnzz.com/z_stat.php?id=1278149431&web_id=1278149431"></script> -->
+</body>
+</html>
+
