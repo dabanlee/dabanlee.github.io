@@ -1,15 +1,13 @@
 menus:
     HOME: /
-    IDEA: /idea
     PHOTOGRAPHY: https://unsplash.com/@dabanli
-    ABOUT: /about/
-    GITHUB: https://github.com/justclear
+    GITHUB: https://github.com/dabanlee
 
 favicon: /favicon.png
 logo: /images/logo.jpg
-title: Just
+title: Lee
 description: ''
 url: /
-urls: http://justclear.github.io/
+urls: http://dabanlee.github.io/
 startyear: 2015
-thisyear: 2019
+thisyear: 2025
